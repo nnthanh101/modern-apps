@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html ng-app="app">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>TravelBuddy - get traveling!</title>
+  <link rel="icon" href="favicon.ico">
+  <link href="app-content/app.css" rel="stylesheet" />
+  <link rel="stylesheet" href="app-content/bootstrap.min.css" />
+  <link rel="stylesheet" href="app-content/carousel.css" />
+  <link rel="stylesheet" href="app-content/style.css" />
+  <link rel="stylesheet" href="css/toaster.css" />
+  <link href="css/bootstrap-slider.min.css" rel="stylesheet" />
+  
+    <style>
+      html {
+      overflow-y: scroll;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="navbar-wrapper">
+    <div class="container">
+
+      <nav class="navbar navbar-inverse navbar-static-top" ng-controller="NavbarController as displayController">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+              aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span> <span
+							class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
+            <a class="navbar-brand" href="#">{{ApplicationName()}}</a>
+          </div>
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+
+            <form class="navbar-form navbar-right">
+                <div class="form-group">
+                  <input type="text" ng-model="searchTripsToCity" class="form-control" placeholder="Find trips to...">
+                </div>
+                <button type="submit" ng-disabled="searchInProgress" class="btn btn-success" ng-click="FindTripsToCity()">Go!</button>
+              </form>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="javascript:void(0)" ng-show="!IsLoggedOn()" ng-click="Login()">Login or Register</a></li>
+
+                <li class="dropdown" ng-show="IsLoggedOn()">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Account <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Make booking</a></li>
+                      <li><a href="#">Advanced search</a></li>
+                      <li><a href="#">My activity statement</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li class="dropdown-header">Shopping cart</li>
+                      <li><a href="#">Show cart</a></li>
+                      <li><a href="#">Buy all in cart</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="#" ng-click="Logout()">Logout {{CurrentUserInfo()}}</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="#">Cognito Id:<br>{{CognitoIdentityId()}}</a></li>
+                      </ul>
+                  </li>
+              </ul>
+
+          </div>
+        </div>
+      </nav>
+
+    </div>
+  </div>
+
+  <toaster-container toaster-options="{'time-out': 3000, 'position-class': 'toast-bottom-right', 'close-button':true, 'animation-class': 'toast-bottom-right'}"></toaster-container>
+  <div ng-class="{ 'alert alert-dismissible': flash, 'alert-success alert-dismissible': flash.type === 'success', 'alert-danger alert-dismissible': flash.type === 'error' }"
+    ng-if="flash">
+    <span ng-bind="flash.message"></span>
+  </div>
+  <div ng-view></div>
+
+  <div class="container">
+    <!-- FOOTER -->
+    <footer>
+      <p class="pull-right">
+        <a href="#">Back to top</a>
+      </p>
+      <p>
+        &copy; 2017 TravelBuddy, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a>
+      </p>
+    </footer>
+  </div>
+
+  <!-- API Gateway -->
+  <script type="text/javascript" src="scripts/lib/axios/dist/axios.standalone.js"></script>
+  <script type="text/javascript" src="scripts/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+  <script type="text/javascript" src="scripts/lib/CryptoJS/rollups/sha256.js"></script>
+  <script type="text/javascript" src="scripts/lib/CryptoJS/components/hmac.js"></script>
+  <script type="text/javascript" src="scripts/lib/CryptoJS/components/enc-base64.js"></script>
+  <script type="text/javascript" src="scripts/lib/moment/moment.js"></script>
+  <script type="text/javascript" src="scripts/lib/url-template/url-template.js"></script>
+  <script type="text/javascript" src="scripts/lib/apiGatewayCore/sigV4Client.js"></script>
+  <script type="text/javascript" src="scripts/lib/apiGatewayCore/apiGatewayClient.js"></script>
+  <script type="text/javascript" src="scripts/lib/apiGatewayCore/simpleHttpClient.js"></script>
+  <script type="text/javascript" src="scripts/lib/apiGatewayCore/utils.js"></script>
+
+  <!-- APIs -->
+  <script type="text/javascript" src="api/apigClient_FlightSpecials.js"></script>
+  <script type="text/javascript" src="api/apigClient_HotelSpecials.js"></script>
+  <script type="text/javascript" src="api/apigClient_TripSearch.js"></script>
+  
+  
+  <!-- Angular JS -->
+  <script src="scripts/angularjs/1.4.9/angular.js"></script>
+  <script src="scripts/angularjs/1.4.9/angular-route.js"></script>
+  <script src="scripts/angularjs/1.4.9/angular-cookies.js"></script>
+  <script src="scripts/angularjs/1.4.9/angular-animate.js"></script>
+  <script src="scripts/toaster.js"></script>
+
+  <!-- Jquery -->
+  <script src="scripts/jquery-2.0.3.min.js"></script>
+
+
+  <!-- Bootstrap -->
+  <script src="scripts/ui-bootstrap-tpls-0.13.3.js"></script>
+  <script src="scripts/bootstrap-slider.min.js"></script>
+  <script src="scripts/ui.bootstrap-slider.js"></script>
+  <script src="scripts/angular-bootstrap-multiselect.min.js"></script>
+  <script src="scripts/bootstrap.min.js"></script>
+
+  <!-- This application functionality -->
+  <script src="scripts/app.js"></script>
+  <script src="scripts/utilities.js"></script>
+  <script src="scripts/webapp-configuration.js"></script>
+
+  <!-- Services -->
+  <script src="app-services/authentication.service.js"></script>
+  <script src="app-services/flash.service.js"></script>
+  <script src="app-services/flightspecials.service.js"></script>
+  <script src="app-services/hotelspecials.service.js"></script>
+  <script src="app-services/tripsearch.service.js"></script>
+  
+  <!-- Controllers -->
+  <script src="navbar/navbar.controller.js"></script>
+  <script src="home/home.controller.js"></script>
+  <script src="login/login.controller.js"></script>
+
+  <!-- Dialogs -->
+  <script src="dialogs/trips.dialog.controller.js"></script>
+
+  <!-- Filters -->
+  <script src="filters/dateFormatter.filter.js"></script>
+  <script src="filters/dateFormatterCountdown.filter.js"></script>
+  
+  <!-- AWS -->
+  <script src="scripts/jsbn.js"></script>
+  <script src="scripts/jsbn2.js"></script>
+  <script src="scripts/sjcl.js"></script>
+  <script src="scripts/aws-sdk.min.js"></script>
+  <script src="scripts/aws-cognito-sdk.min.js"></script>
+  <script src="scripts/amazon-cognito-identity.min.js"></script>
+
+  <!-- Enums -->
+
+</body>
+
+</html>

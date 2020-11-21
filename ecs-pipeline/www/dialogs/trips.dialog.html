@@ -1,0 +1,33 @@
+<div class="modal-header">
+  <h2 ng-show="mode() == 'tripstocity'" class="modal-title">Trip Search for trips to '{{city}}'</h2>
+  <h2 ng-show="mode() == 'all'" class="modal-title">Showing all trips</h2>
+</div>
+
+<div class="modal-body" style="font-size:12px;">
+
+<!-- Placeholder for 'no Trips' -->
+<div ng-show="trips.length == 0">
+  There are no trips that match your search!<br/><br/>
+  Try refining your search criteria.
+</div>
+<!-- Results -->
+<table class="table table-hover" ng-hide="trips.length == 0">
+<thead>
+  <td><b>Departing</b></td>
+  <td><b>Airline</b></td>
+  <td><b>Origin</b></td>
+  <td><b>Destination</b></td>
+</thead>
+<tbody>
+  <tr class="item" style="cursor:pointer" ng-repeat="trip in trips">
+    <td>{{trip.date | dateFormatter }}</td>
+    <td>{{trip.airline}}</td>
+    <td>{{trip.originCity}}</td>
+    <td>{{trip.destinationCity}}</td>    
+  </tr>
+</tbody>
+</table>
+</div>
+<div class="modal-footer" style="font-size:12px;">
+  <button class="btn btn-primary" type="button" ng-click="CloseDialog()">Done</button>
+</div>
