@@ -29,6 +29,9 @@ export interface PipelineStackProps extends cdk.StackProps {
 }
 
 export class EcsPipelineStack extends cdk.Stack {
+  readonly vpc: ec2.Vpc;
+  readonly cluster: ecs.Cluster;
+  readonly fgservice: ecs.FargateService;
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -43,7 +46,7 @@ export class EcsPipelineStack extends cdk.Stack {
     // });
     
     
-    const vpc = new ec2.Vpc(this, applicationMetaData.VpcName, {
+    this.vpc = new ec2.Vpc(this, applicationMetaData.VpcName, {
       maxAzs: applicationMetaData.maxAzs,
       cidr: applicationMetaData.cidr,
       subnetConfiguration: [
@@ -52,13 +55,18 @@ export class EcsPipelineStack extends cdk.Stack {
           cidrMask: 24,
           subnetType: ec2.SubnetType.PUBLIC,
         },
+        {
+          name: "Private-Subnet-App",
+          cidrMask: 24,
+          subnetType: ec2.SubnetType.PRIVATE,
+        },
       ],
       gatewayEndpoints: {
         S3: {
           service: ec2.GatewayVpcEndpointAwsService.S3,
         },
       },
-      natGateways: 1,
+      // natGateways: 0,
     });
 
     /**
@@ -71,7 +79,7 @@ export class EcsPipelineStack extends cdk.Stack {
       this,
       applicationMetaData.SecurityGroupName,
       {
-        vpc: vpc,
+        vpc: this.vpc,
         allowAllOutbound: false,
         securityGroupName: applicationMetaData.SecurityGroupName,
       }
@@ -87,8 +95,8 @@ export class EcsPipelineStack extends cdk.Stack {
      *
      *
      **/
-    const cluster = new ecs.Cluster(this, applicationMetaData.clusterName, {
-      vpc: vpc,
+    this.cluster = new ecs.Cluster(this, applicationMetaData.clusterName, {
+      vpc: this.vpc,
       clusterName: applicationMetaData.clusterName,
     });
 
@@ -101,11 +109,11 @@ export class EcsPipelineStack extends cdk.Stack {
       this,
       applicationMetaData.loadBalancerName,
       {
-        vpc: vpc,
+        vpc: this.vpc,
         internetFacing: true,
         ipAddressType: IpAddressType.IPV4,
         securityGroup: securityGrp,
-        vpcSubnets: vpc.selectSubnets({
+        vpcSubnets: this.vpc.selectSubnets({
           subnetType: SubnetType.PUBLIC,
         }),
         loadBalancerName: applicationMetaData.loadBalancerName,
@@ -116,7 +124,7 @@ export class EcsPipelineStack extends cdk.Stack {
       this,
       applicationMetaData.targetGroupName,
       {
-        vpc: vpc,
+        vpc: this.vpc,
         protocol: elbv2.ApplicationProtocol.HTTP,
         port: applicationMetaData.allowPort,
         targetType: elbv2.TargetType.IP,
@@ -211,8 +219,8 @@ export class EcsPipelineStack extends cdk.Stack {
      * 7. Create Fargate Service
      * @todo configurable `desiredCount`, `maxHealthyPercent`, `minHealthyPercent`
      */
-    const service = new ecs.FargateService(this, "Fargate-Service", {
-      cluster: cluster,
+    this.fgservice = new ecs.FargateService(this, "Fargate-Service", {
+      cluster: this.cluster,
       taskDefinition: taskDef,
       desiredCount: 2,
       maxHealthyPercent: 200,
@@ -321,7 +329,7 @@ export class EcsPipelineStack extends cdk.Stack {
       pathPattern: "/",
     });
 
-    targetGrp.addTarget(service);
+    targetGrp.addTarget(this.fgservice);
 
     // Pipeline ECS Deploy Stage
     new codepipeline.Pipeline(this, "Pipeline", {
@@ -355,8 +363,8 @@ export class EcsPipelineStack extends cdk.Stack {
           actions: [
             new codepipeline_actions.EcsDeployAction({
               actionName: "ecs_deploy",
-              service: service,
-              // input: cdkBuildOutput,
+              service: this.fgservice,
+              input: cdkBuildOutput,
             }),
           ],
         },
@@ -402,7 +410,7 @@ export class EcsPipelineStack extends cdk.Stack {
     const ecsMemoryMetric = new cloudwatch.Metric({
       namespace: "AWS/ECS",
       metricName: "MemeoryUtilization",
-      dimensions: { ProjectName: `${service.serviceName}` },
+      dimensions: { ProjectName: `${this.fgservice.serviceName}` },
       statistic: "Average",
       period: cdk.Duration.minutes(5),
     });
@@ -410,7 +418,7 @@ export class EcsPipelineStack extends cdk.Stack {
     const ecsCPUMetric = new cloudwatch.Metric({
       namespace: "AWS/ECS",
       metricName: "CPUUtilization",
-      dimensions: { ProjectName: `${service.serviceName}` },
+      dimensions: { ProjectName: `${this.fgservice.serviceName}` },
       statistic: "Average",
       period: cdk.Duration.minutes(5),
     });
@@ -418,7 +426,7 @@ export class EcsPipelineStack extends cdk.Stack {
     const applicationELBMetric = new cloudwatch.Metric({
       namespace: "AWS/ApplicationELB",
       metricName: "LoadBalancer",
-      dimensions: { ProjectName: `${service.serviceName}` },
+      dimensions: { ProjectName: `${this.fgservice.serviceName}` },
       statistic: "Sum",
       period: cdk.Duration.minutes(1),
     });
@@ -486,5 +494,7 @@ export class EcsPipelineStack extends cdk.Stack {
         width: 14,
       })
     );
+    
+    
   }
 }
