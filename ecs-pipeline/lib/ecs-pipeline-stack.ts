@@ -37,23 +37,29 @@ export class EcsPipelineStack extends cdk.Stack {
      *
      *
      **/
-    const vpc = new ec2.Vpc(this, applicationMetaData.VpcName, {
-      maxAzs: applicationMetaData.maxAzs,
-      cidr: applicationMetaData.cidr,
-      subnetConfiguration: [
-        {
-          name: "Public-Subnet-App",
-          cidrMask: 24,
-          subnetType: ec2.SubnetType.PUBLIC,
-        },
-      ],
-      gatewayEndpoints: {
-        S3: {
-          service: ec2.GatewayVpcEndpointAwsService.S3,
-        },
-      },
-      natGateways: 1,
+    
+    const vpc = ec2.Vpc.fromLookup(this, applicationMetaData.VpcName,  {
+      vpcName: applicationMetaData.ecsStackName + "/" + applicationMetaData.VpcName
     });
+    
+    
+    // const vpc = new ec2.Vpc(this, applicationMetaData.VpcName, {
+    //   maxAzs: applicationMetaData.maxAzs,
+    //   cidr: applicationMetaData.cidr,
+    //   subnetConfiguration: [
+    //     {
+    //       name: "Public-Subnet-App",
+    //       cidrMask: 24,
+    //       subnetType: ec2.SubnetType.PUBLIC,
+    //     },
+    //   ],
+    //   gatewayEndpoints: {
+    //     S3: {
+    //       service: ec2.GatewayVpcEndpointAwsService.S3,
+    //     },
+    //   },
+    //   natGateways: 1,
+    // });
 
     /**
      * 2. Create Security Group
@@ -71,12 +77,10 @@ export class EcsPipelineStack extends cdk.Stack {
       }
     );
 
-    securityGrp.addEgressRule(
-      ec2.Peer.anyIpv4(),
-      ec2.Port.tcp(applicationMetaData.allowPort)
-    );
-
-    securityGrp.addEgressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(443));
+    // Inbound 
+    securityGrp.addIngressRule(ec2.Peer.anyIpv4(),ec2.Port.tcp(applicationMetaData.allowPort));
+    // outbound 
+    securityGrp.addEgressRule(ec2.Peer.anyIpv4(), ec2.Port.allTcp())
 
     /**
      * 3. Create Cluster
@@ -273,7 +277,7 @@ export class EcsPipelineStack extends cdk.Stack {
 
     /** S3 Bucket for artifact outputs */
     const pipelineOutputs = new s3.Bucket(this, "pipeline-build-outputs", {
-      bucketName: `pipeline-artifact-outputs`,
+      bucketName: "pipeline-artifact-outputs",
       encryption: s3.BucketEncryption.UNENCRYPTED,
       versioned: true,
     });
@@ -288,10 +292,10 @@ export class EcsPipelineStack extends cdk.Stack {
     //   "ImportedRepo",
     //   "react-boilerplate"
     // );
-    
-    const code_repo = new codecommit.Repository(this, 'Repository' ,{
-      repositoryName: 'FontendRepository',
-      description: 'Some description.', 
+
+    const code_repo = new codecommit.Repository(this, "Repository", {
+      repositoryName: "FontendRepository",
+      description: "Some description.",
     });
 
     // Pipeline Build Stage

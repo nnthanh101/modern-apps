@@ -12,7 +12,9 @@ import { applicationMetaData } from "../configurations/config";
 
 const app = new cdk.App();
 
-new EcsPipelineStack(app, "EcsPipelineStack", {
+console.log(process.env.AWS_ACCOUNT + ":" + process.env.AWS_REGION)
+
+new EcsPipelineStack(app, applicationMetaData.ecsStackName, {
   env: {
     account: process.env.AWS_ACCOUNT,
     region: process.env.AWS_REGION,

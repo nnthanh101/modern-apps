@@ -1,4 +1,7 @@
 export const applicationMetaData = {
+    ecsStackName: "EcsPipelineStack",
+    
+    
     /*AWSAcount*/
     awsAccount: "${AWS_ACCOUNT}",
     awsRegion: "${AWS_REGION}",
@@ -22,4 +25,7 @@ export const applicationMetaData = {
     targetGroupName: "ECS-Targets",
     
     wwwCodeLocation: "www",
+    
+    createVpc: true,
+
 }
