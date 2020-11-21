@@ -38,28 +38,28 @@ export class EcsPipelineStack extends cdk.Stack {
      *
      **/
     
-    const vpc = ec2.Vpc.fromLookup(this, applicationMetaData.VpcName,  {
-      vpcName: applicationMetaData.ecsStackName + "/" + applicationMetaData.VpcName
-    });
-    
-    
-    // const vpc = new ec2.Vpc(this, applicationMetaData.VpcName, {
-    //   maxAzs: applicationMetaData.maxAzs,
-    //   cidr: applicationMetaData.cidr,
-    //   subnetConfiguration: [
-    //     {
-    //       name: "Public-Subnet-App",
-    //       cidrMask: 24,
-    //       subnetType: ec2.SubnetType.PUBLIC,
-    //     },
-    //   ],
-    //   gatewayEndpoints: {
-    //     S3: {
-    //       service: ec2.GatewayVpcEndpointAwsService.S3,
-    //     },
-    //   },
-    //   natGateways: 1,
+    // const vpc = ec2.Vpc.fromLookup(this, applicationMetaData.VpcName,  {
+    //   vpcName: applicationMetaData.ecsStackName + "/" + applicationMetaData.VpcName,
     // });
+    
+    
+    const vpc = new ec2.Vpc(this, applicationMetaData.VpcName, {
+      maxAzs: applicationMetaData.maxAzs,
+      cidr: applicationMetaData.cidr,
+      subnetConfiguration: [
+        {
+          name: "Public-Subnet-App",
+          cidrMask: 24,
+          subnetType: ec2.SubnetType.PUBLIC,
+        },
+      ],
+      gatewayEndpoints: {
+        S3: {
+          service: ec2.GatewayVpcEndpointAwsService.S3,
+        },
+      },
+      natGateways: 1,
+    });
 
     /**
      * 2. Create Security Group
@@ -259,6 +259,7 @@ export class EcsPipelineStack extends cdk.Stack {
     const pipeline_role = new iam.Role(this, "pipeline-role", {
       assumedBy: new iam.ServicePrincipal("codepipeline.amazonaws.com"),
       description: "CodePipeline Role",
+      roleName: "pipeline-role",
     });
 
     /** Attach managed policies to CodePipeline */
@@ -297,6 +298,7 @@ export class EcsPipelineStack extends cdk.Stack {
       repositoryName: "FontendRepository",
       description: "Some description.",
     });
+    
 
     // Pipeline Build Stage
     const cdkBuild = new codebuild.PipelineProject(this, "CdkBuild", {
@@ -306,6 +308,7 @@ export class EcsPipelineStack extends cdk.Stack {
         buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_3,
         privileged: true,
       },
+      
     });
 
     // We could add the CodeBuild for S3 upload and github enterprise pull here...
@@ -353,7 +356,7 @@ export class EcsPipelineStack extends cdk.Stack {
             new codepipeline_actions.EcsDeployAction({
               actionName: "ecs_deploy",
               service: service,
-              input: cdkBuildOutput,
+              // input: cdkBuildOutput,
             }),
           ],
         },
