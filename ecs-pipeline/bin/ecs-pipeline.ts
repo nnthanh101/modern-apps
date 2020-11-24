@@ -26,9 +26,10 @@ const ecsPipelineStack = new EcsPipelineStack(
 );
 
 new FargateFastAutoscalerStack(app, "FargateFastAutoscalerStack", {
-  awsCliLayerArn: "",
-  awsCliLayerVersion: "",
+  // awsCliLayerArn: "",
+  // awsCliLayerVersion: "",
   vpc: ecsPipelineStack.vpc,
+  sg: ecsPipelineStack.securityGrp,
   cluster: ecsPipelineStack.cluster,
   fgService: ecsPipelineStack.fgservice,
   disableScaleIn: true,

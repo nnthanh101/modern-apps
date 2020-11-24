@@ -32,6 +32,7 @@ export class EcsPipelineStack extends cdk.Stack {
   readonly vpc: ec2.Vpc;
   readonly cluster: ecs.Cluster;
   readonly fgservice: ecs.FargateService;
+  readonly securityGrp: ec2.SecurityGroup;
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -75,20 +76,29 @@ export class EcsPipelineStack extends cdk.Stack {
      *
      **/
 
-    const securityGrp = new ec2.SecurityGroup(
-      this,
-      applicationMetaData.SecurityGroupName,
-      {
-        vpc: this.vpc,
-        allowAllOutbound: false,
-        securityGroupName: applicationMetaData.SecurityGroupName,
-      }
-    );
+    // const securityGrp = new ec2.SecurityGroup(
+    //   this,
+    //   applicationMetaData.SecurityGroupName,
+    //   {
+    //     vpc: this.vpc,
+    //     allowAllOutbound: false,
+    //     securityGroupName: applicationMetaData.SecurityGroupName,
+    //   }
+    // );
 
-    // Inbound 
-    securityGrp.addIngressRule(ec2.Peer.anyIpv4(),ec2.Port.tcp(applicationMetaData.allowPort));
-    // outbound 
-    securityGrp.addEgressRule(ec2.Peer.anyIpv4(), ec2.Port.allTcp())
+    // // Inbound 
+    // securityGrp.addIngressRule(ec2.Peer.anyIpv4(),ec2.Port.tcp(applicationMetaData.allowPort));
+    // // outbound 
+    // securityGrp.addEgressRule(ec2.Peer.anyIpv4(), ec2.Port.allTcp())
+    
+    //sg for HTTP public access
+    this.securityGrp = new ec2.SecurityGroup(this, 'HttpPublicSecurityGroup', {
+      allowAllOutbound: true,
+      securityGroupName: 'HttpPublicSecurityGroup',
+      vpc: this.vpc,
+    });
+
+    this.securityGrp.connections.allowFromAnyIpv4(ec2.Port.tcp(80));
 
     /**
      * 3. Create Cluster
@@ -112,7 +122,7 @@ export class EcsPipelineStack extends cdk.Stack {
         vpc: this.vpc,
         internetFacing: true,
         ipAddressType: IpAddressType.IPV4,
-        securityGroup: securityGrp,
+        securityGroup: this.securityGrp,
         vpcSubnets: this.vpc.selectSubnets({
           subnetType: SubnetType.PUBLIC,
         }),
