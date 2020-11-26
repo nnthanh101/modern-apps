@@ -8,22 +8,23 @@ import * as sfn from "@aws-cdk/aws-stepfunctions";
 import * as sfn_tasks from "@aws-cdk/aws-stepfunctions-tasks";
 import * as sns from "@aws-cdk/aws-sns";
 
+import { applicationMetaData } from "../configurations/config";
+
 const AWSCLI_LAYER_ARN = "arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-awscli";
 const AWSCLI_LAYER_VERSION = "1.18.142";
 
 export interface FargateFastAutoscalerProps extends core.StackProps {
-  readonly awsCliLayerArn?: string;
-  readonly awsCliLayerVersion?: string;
   readonly vpc: ec2.Vpc;
-  readonly sg: ec2.SecurityGroup;
   readonly cluster: ecs.Cluster;
   readonly fgService: ecs.FargateService;
+  
+  readonly awsCliLayerArn?: string;
+  readonly awsCliLayerVersion?: string;
   readonly disableScaleIn?: boolean;
   readonly snsTopic?: sns.ITopic;
 }
 
 export class FargateFastAutoscalerStack extends core.Stack {
-  public readonly layerVersionArn: string;
   constructor(
     parent: core.App,
     name: string,
@@ -32,23 +33,6 @@ export class FargateFastAutoscalerStack extends core.Stack {
     super(parent, name, {
       ...props,
     });
-
-    // create a security group that allows all traffic from the same sg
-    // const sg = new ec2.SecurityGroup(this, "SharedSecurityGroup", {
-    //   vpc: props.vpc,
-    // });
-    // sg.connections.allowFrom(sg, ec2.Port.allTraffic());
-
-    //sg for HTTP public access
-    // const httpPublicSecurityGroup = new ec2.SecurityGroup(
-    //   this,
-    //   "HttpPublicSecurityGroup",
-    //   {
-    //     allowAllOutbound: true,
-    //     securityGroupName: "HttpPublicSecurityGroup",
-    //     vpc: props.vpc,
-    //   }
-    // );
 
     const lambdaRole = new iam.Role(this, "lambdaRole", {
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
@@ -97,21 +81,27 @@ export class FargateFastAutoscalerStack extends core.Stack {
       },
     });
 
-    this.layerVersionArn = core.Token.asString(
+    let layerVersionArn = core.Token.asString(
       resource.getAtt("Outputs.LayerVersionArn")
     );
-
+    
+    // create a security group that allows all traffic from the same sg
+    const sg = new ec2.SecurityGroup(this, 'SharedSecurityGroup', {
+      vpc: props.vpc,
+    });
+    sg.connections.allowFrom(sg, ec2.Port.allTraffic());
+    
     const fargateWatcherFunc = new lambda.Function(this, "fargateWatcherFunc", {
       runtime: lambda.Runtime.PROVIDED,
       handler: "main",
       code: lambda.Code.fromAsset(
-        path.join(__dirname, "../../sam/fargateWatcherFunc/func.d")
+        path.join(__dirname, "../sam/fargateWatcherFunc/func.d")
       ),
       layers: [
         lambda.LayerVersion.fromLayerVersionArn(
           this,
           "AwsCliLayer",
-          this.layerVersionArn
+          layerVersionArn
         ),
       ],
       memorySize: 1024,
@@ -119,7 +109,7 @@ export class FargateFastAutoscalerStack extends core.Stack {
       role: lambdaRole,
       vpc: props.vpc,
       vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE },
-      securityGroup: props.sg,
+      securityGroup: sg,
       environment: {
         cluster: props.cluster.clusterName,
         service: props.fgService.serviceName,
@@ -129,12 +119,12 @@ export class FargateFastAutoscalerStack extends core.Stack {
     });
 
     // step function
-    const wait3 = new sfn.Wait(this, 'Wait 3 Seconds', {
+    const wait3 = new sfn.Wait(this, "Wait " + applicationMetaData.timeToNextChecker + " Seconds", {
       // time: sfn.WaitTime.secondsPath('$.wait_time')
-      time: sfn.WaitTime.duration(core.Duration.seconds(3)),
+      time: sfn.WaitTime.duration(core.Duration.seconds(applicationMetaData.timeToNextChecker)),
     });
-    const wait60 = new sfn.Wait(this, 'Wait 60 Seconds', {
-      time: sfn.WaitTime.duration(core.Duration.seconds(60)),
+    const wait60 = new sfn.Wait(this, "Wait "+ applicationMetaData.waitForSacleDone + " Seconds", {
+      time: sfn.WaitTime.duration(core.Duration.seconds(applicationMetaData.waitForSacleDone)),
     });
 
     const getEcsTasks = new sfn.Task(this, "GetECSTasks", {
@@ -168,57 +158,60 @@ export class FargateFastAutoscalerStack extends core.Stack {
         )
       ),
     });
-
+    
+    let desireLv1 = applicationMetaData.desireLv1.split("_");
+    let desireLv2 = applicationMetaData.desireLv2.split("_");
+    let desireLv3 = applicationMetaData.desireLv3.split("_");
+    let desireLv4 = applicationMetaData.desireLv4.split("_");
+    let desireDone = Number (applicationMetaData.desireDone);
+    
+    
     const isServiceOverloaded = new sfn.Choice(this, "IsServiceOverloaded", {
       inputPath: "$.status",
     });
     const isDone = new sfn.Pass(this, "Done");
 
-    const desire2 = new sfn.Pass(this, "Desire3", {
+    const desire_lv1 = new sfn.Pass(this, "Desire" + desireLv1[1], {
       outputPath: "$",
-      result: sfn.Result.fromObject({ Desired: 3 }),
+      result: sfn.Result.fromObject({ Desired: desireLv1[1] }),
     });
-    // const desire5 = new sfn.Pass(this, 'Desire5', {
-    //     outputPath: DISCARD,
-    //     result: sfn.Result.fromObject({Desired: 5})
-    // })
-    const desire10 = new sfn.Pass(this, "Desire4", {
+    const desire_lv2 = new sfn.Pass(this, "Desire" + desireLv2[1], {
       outputPath: "$",
-      result: sfn.Result.fromObject({ Desired: 4 }),
+      result: sfn.Result.fromObject({ Desired: desireLv2[1] }),
     });
-    const desire15 = new sfn.Pass(this, "Desire5", {
+    const desire_lv3 = new sfn.Pass(this, "Desire" + desireLv3[1], {
       outputPath: "$",
-      result: sfn.Result.fromObject({ Desired: 5 }),
+      result: sfn.Result.fromObject({ Desired: desireLv3[1] }),
     });
-    const desire20 = new sfn.Pass(this, "Desire6", {
+    const desire_lv4 = new sfn.Pass(this, "Desire" + desireLv4[1], {
       outputPath: "$",
-      result: sfn.Result.fromObject({ Desired: 6 }),
+      result: sfn.Result.fromObject({ Desired: desireLv4[1] }),
     });
 
     const chain = sfn.Chain.start(getEcsTasks).next(
       isServiceOverloaded
         .when(
-          sfn.Condition.numberGreaterThanEquals("$.avg", 6),
-          desire20.next(
+          sfn.Condition.numberGreaterThanEquals("$.avg", Number(desireLv4[0])),
+          desire_lv4.next(
             snsScaleOut.next(svcScaleOut.next(wait60.next(getEcsTasks)))
           )
         )
         .when(
-          sfn.Condition.numberGreaterThanEquals("$.avg", 5),
-          desire15.next(snsScaleOut)
+          sfn.Condition.numberGreaterThanEquals("$.avg", Number(desireLv3[0])),
+          desire_lv3.next(snsScaleOut)
         )
         .when(
-          sfn.Condition.numberGreaterThanEquals("$.avg", 4),
-          desire10.next(snsScaleOut)
+          sfn.Condition.numberGreaterThanEquals("$.avg", Number(desireLv2[0])),
+          desire_lv2.next(snsScaleOut)
         )
         .when(
-          sfn.Condition.numberGreaterThanEquals("$.avg", 3),
-          desire2.next(snsScaleOut)
+          sfn.Condition.numberGreaterThanEquals("$.avg", Number(desireLv1[0])),
+          desire_lv1.next(snsScaleOut)
         )
         // .when(sfn.Condition.numberLessThanEquals('$.avg', 10), desire2
         //     .next(snsScaleOut
         // ))
-        .when(sfn.Condition.numberLessThan("$.avg", 1), isDone)
+        .when(sfn.Condition.numberGreaterThanEquals("$.avg", desireDone), isDone)
         .otherwise(wait3.next(getEcsTasks))
     );
 
@@ -227,7 +220,9 @@ export class FargateFastAutoscalerStack extends core.Stack {
       timeout: core.Duration.hours(24),
     });
 
-    new core.CfnOutput(this, "ClusterARN: ", { value: props.cluster.clusterArn });
+    new core.CfnOutput(this, "ClusterARN: ", {
+      value: props.cluster.clusterArn,
+    });
     new core.CfnOutput(this, "FargateWatcherLambdaArn: ", {
       value: fargateWatcherFunc.functionArn,
     });
