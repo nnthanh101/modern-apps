@@ -1,0 +1,32 @@
+version: 0.1
+
+phases:
+  install:
+    commands:
+      - echo Entering install phase...
+      - wget http://mirror.olnevhost.net/pub/apache/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
+      - tar xzvf apache-maven-3.3.9-bin.tar.gz -C /opt/
+      - export PATH=/opt/apache-maven-3.3.9/bin:$PATH
+  pre_build:
+    commands:
+      - echo Entering pre_build phase...
+      - echo Nothing to do in the pre_build phase...
+  build:
+    commands:
+      - echo Entering build phase...
+      - echo Build started on `date`
+      - mvn -f pom.xml compile war:exploded
+  post_build:
+    commands:
+      - echo Entering post_build phase...
+      - echo Build completed on `date`
+      - mv target/devlounge .
+      - mv .ebextensions devlounge/.
+      
+artifacts:
+  type: zip
+  files:
+    - 'devlounge/WEB-INF/**/*'
+    - 'devlounge/resources/**/*'
+    - 'devlounge/.ebextensions/**/*'
+    

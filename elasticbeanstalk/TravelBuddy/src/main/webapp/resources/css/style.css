@@ -1,0 +1,76 @@
+.icon-box {
+    background: #f5f5f5
+}
+
+.flighttime {
+    text-transform: uppercase;
+    font-size: 0.8333em;
+    line-height: 40px;
+    padding-right:20px;
+}
+
+.flighttime-urgent {
+  color:red;
+}
+
+.flighttime-soon {
+  color:rgb(180,82,110);
+}
+
+.flightspecialbox {
+    font-family: Arial, Helvetica;
+    color: rgb(45,62,83);
+    background-color: rgb(240,240,240);
+    display:block;
+    margin:10px;
+}
+
+.flightdestination {
+  padding-left:20px;
+  padding-top:10px;
+  padding-bottom:10px;
+}
+
+.flightprice {
+  color:rgb(10,160,230);
+  font-size: 28px;
+}
+
+.flighticon {
+  padding-left:10px;
+  padding-right:10px;
+  background-color: rgb(1,183,242);
+  line-height: 40px;
+  color:white;
+  width:40px;
+}
+
+.flightdestinationblock {
+  padding-bottom:60px;
+}
+
+.flightdescription {
+	font-style: italic;
+	color: #999999;	
+}
+
+.dymo{
+    background-color: rgba(0,0,0,0.5);
+    color:white;
+    display:inline;
+    font-family: courier;
+    line-height:2em;
+    text-transform: uppercase;
+}
+
+.button-gap {
+  margin-top:20px;
+}
+
+.flighticon-urgent{
+  background-color: rgb(255,0,0);
+}
+
+.flighticon-soon{
+  background-color: rgb(180,82,110);
+}

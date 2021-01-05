@@ -1,0 +1,19 @@
+branch-defaults:
+  default:
+    environment: rpw-tb-dev
+environment-defaults:
+  rpw-tb-dev:
+    branch: null
+    repository: null
+global:
+  application_name: TravelBuddy
+  default_ec2_keyname: qwikLABS-L7989-95521
+  default_platform: arn:aws:elasticbeanstalk:ap-southeast-2::platform/Tomcat 8 with
+    Java 8 running on 64bit Amazon Linux/2.6.0
+  default_region: ap-southeast-2
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: aws-lab-env
+  sc: null
+  workspace_type: Application

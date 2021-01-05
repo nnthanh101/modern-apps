@@ -1,11 +1,16 @@
-# [AWS Cloud Development Kit (CDK)]((https://aws.amazon.com/cdk/)) elastic beanstalk
+# Welcome to your CDK TypeScript project!
 
+[*] Elastic beanstalk with mysql rds
+* `cdk deploy vpc`
+* `cdk deploy rdsmysql`
+* Create table in `./TravelBuddy/DB.sql`
+* `cdk deploy eb`
 
-## CDK - useful commands
-
-A CDK app with an instance of a stack (`BlueprintStack`) which contains an Amazon SQS queue that is subscribed to an Amazon SNS topic.
+This is a blank project for TypeScript development with CDK.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
+
+## Useful commands
 
  * `npm run build`   compile typescript to js
  * `npm run watch`   watch for changes and compile

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing 
+		infrastructure -->
+
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+	
+	<!--  Allows for us to inject JDBC connection string from environment -->
+	<context:property-placeholder />
+	
+	<view-controller path="/" view-name="index"/>
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
+		up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+	
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources 
+		in the /WEB-INF/views directory -->
+	<beans:bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+
+	<!--  Note that ${JDBC_CONNECTION_STRING} etc are defined in the 
+	servers/tomcat/context.xml when running in local environment for development, and 
+	when deployed to Beanstalk, the env vars are substituted in from the EB environment
+	 -->
+	<beans:bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource"
+		destroy-method="close">		
+		<beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<beans:property name="url" value="${JDBC_CONNECTION_STRING}" />
+		<beans:property name="username" value="${JDBC_UID}" />
+		<beans:property name="password" value="${JDBC_PWD}" />	
+		<beans:property name="jdbcInterceptors" value="com.amazonaws.xray.sql.mysql.TracingInterceptor" />
+	</beans:bean>
+
+	<!-- Hibernate 4 SessionFactory Bean definition -->
+	<beans:bean id="hibernate4AnnotatedSessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<beans:property name="dataSource" ref="dataSource" />
+		<beans:property name="annotatedClasses">
+			<beans:list>
+				<beans:value>devlounge.spring.model.FlightSpecial</beans:value>
+				<beans:value>devlounge.spring.model.HotelSpecial</beans:value>
+			</beans:list>
+		</beans:property>
+		<beans:property name="hibernateProperties">
+			<beans:props>
+				<beans:prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect
+				</beans:prop>
+				<beans:prop key="hibernate.show_sql">true</beans:prop>				
+			</beans:props>
+		</beans:property>
+	</beans:bean>
+
+	<!-- Flight Specials Data Service -->	
+	<beans:bean id="flightspecialDAO" class="devlounge.spring.dao.FlightSpecialDAOImpl">
+		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</beans:bean> 
+	<beans:bean id="flightSpecialService" class="devlounge.spring.service.FlightSpecialServiceImpl">
+		<beans:property name="flightspecialDAO" ref="flightspecialDAO"></beans:property>
+	</beans:bean>
+
+	<!-- Hotel Specials Data Service -->	
+	<beans:bean id="hotelspecialDAO" class="devlounge.spring.dao.HotelSpecialDAOImpl">
+		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</beans:bean> 
+	<beans:bean id="hotelSpecialService" class="devlounge.spring.service.HotelSpecialServiceImpl">
+		<beans:property name="hotelspecialDAO" ref="hotelspecialDAO"></beans:property>
+	</beans:bean>
+
+	<context:component-scan base-package="devlounge.spring" />
+	
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<beans:bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	</beans:bean>
+
+
+</beans:beans>

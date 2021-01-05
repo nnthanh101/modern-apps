@@ -1,0 +1,147 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/bin/npm', 'install', '-g', 'aws-cdk@7.0.0' ]
+2 info using npm@3.10.10
+3 info using node@v6.17.1
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readGlobalPackageData
+7 silly fetchPackageMetaData aws-cdk@7.0.0
+8 silly fetchNamedPackageData aws-cdk
+9 silly mapToRegistry name aws-cdk
+10 silly mapToRegistry using default registry
+11 silly mapToRegistry registry https://registry.npmjs.org/
+12 silly mapToRegistry data Result {
+12 silly mapToRegistry   raw: 'aws-cdk',
+12 silly mapToRegistry   scope: null,
+12 silly mapToRegistry   escapedName: 'aws-cdk',
+12 silly mapToRegistry   name: 'aws-cdk',
+12 silly mapToRegistry   rawSpec: '',
+12 silly mapToRegistry   spec: 'latest',
+12 silly mapToRegistry   type: 'tag' }
+13 silly mapToRegistry uri https://registry.npmjs.org/aws-cdk
+14 verbose request uri https://registry.npmjs.org/aws-cdk
+15 verbose request no auth needed
+16 info attempt registry request try #1 at 4:12:48 AM
+17 verbose request id 3b9446f5fc0dbb08
+18 verbose etag W/"d625d921ee92b1f2c4a24ae1e0f07809"
+19 verbose lastModified Tue, 17 Nov 2020 11:58:46 GMT
+20 http request GET https://registry.npmjs.org/aws-cdk
+21 http 304 https://registry.npmjs.org/aws-cdk
+22 verbose headers { date: 'Fri, 20 Nov 2020 04:12:48 GMT',
+22 verbose headers   connection: 'keep-alive',
+22 verbose headers   'set-cookie': [ '__cfduid=db6f7da4e14af45eaca43518ccc85d5551605845568; expires=Sun, 20-Dec-20 04:12:48 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+22 verbose headers   'cf-ray': '5f4f55b18830dd2a-SIN',
+22 verbose headers   age: '1264',
+22 verbose headers   'cache-control': 'public, max-age=300',
+22 verbose headers   etag: '"d625d921ee92b1f2c4a24ae1e0f07809"',
+22 verbose headers   'last-modified': 'Tue, 17 Nov 2020 11:58:46 GMT',
+22 verbose headers   vary: 'Accept-Encoding',
+22 verbose headers   'cf-cache-status': 'HIT',
+22 verbose headers   'cf-request-id': '068573e2f20000dd2a34b55000000001',
+22 verbose headers   'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+22 verbose headers   server: 'cloudflare' }
+23 silly get cb [ 304,
+23 silly get   { date: 'Fri, 20 Nov 2020 04:12:48 GMT',
+23 silly get     connection: 'keep-alive',
+23 silly get     'set-cookie': [ '__cfduid=db6f7da4e14af45eaca43518ccc85d5551605845568; expires=Sun, 20-Dec-20 04:12:48 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+23 silly get     'cf-ray': '5f4f55b18830dd2a-SIN',
+23 silly get     age: '1264',
+23 silly get     'cache-control': 'public, max-age=300',
+23 silly get     etag: '"d625d921ee92b1f2c4a24ae1e0f07809"',
+23 silly get     'last-modified': 'Tue, 17 Nov 2020 11:58:46 GMT',
+23 silly get     vary: 'Accept-Encoding',
+23 silly get     'cf-cache-status': 'HIT',
+23 silly get     'cf-request-id': '068573e2f20000dd2a34b55000000001',
+23 silly get     'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+23 silly get     server: 'cloudflare' } ]
+24 verbose etag https://registry.npmjs.org/aws-cdk from cache
+25 verbose get saving aws-cdk to /root/.npm/registry.npmjs.org/aws-cdk/.cache.json
+26 verbose correctMkdir /root/.npm correctMkdir not in flight; initializing
+27 silly fetchNamedPackageData No valid target from cache, forcing network
+28 verbose request uri https://registry.npmjs.org/aws-cdk
+29 verbose request no auth needed
+30 info attempt registry request try #1 at 4:12:48 AM
+31 http request GET https://registry.npmjs.org/aws-cdk
+32 http 200 https://registry.npmjs.org/aws-cdk
+33 verbose headers { date: 'Fri, 20 Nov 2020 04:12:48 GMT',
+33 verbose headers   'content-type': 'application/json',
+33 verbose headers   'transfer-encoding': 'chunked',
+33 verbose headers   connection: 'keep-alive',
+33 verbose headers   'set-cookie': [ '__cfduid=db6f7da4e14af45eaca43518ccc85d5551605845568; expires=Sun, 20-Dec-20 04:12:48 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+33 verbose headers   'cf-ray': '5f4f55b1d8b3dd2a-SIN',
+33 verbose headers   age: '1264',
+33 verbose headers   'cache-control': 'public, max-age=300',
+33 verbose headers   etag: 'W/"d625d921ee92b1f2c4a24ae1e0f07809"',
+33 verbose headers   'last-modified': 'Tue, 17 Nov 2020 11:58:46 GMT',
+33 verbose headers   vary: 'accept-encoding, accept',
+33 verbose headers   'cf-cache-status': 'HIT',
+33 verbose headers   'cf-request-id': '068573e3270000dd2a053c3000000001',
+33 verbose headers   'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+33 verbose headers   server: 'cloudflare',
+33 verbose headers   'content-encoding': 'gzip' }
+34 silly get cb [ 200,
+34 silly get   { date: 'Fri, 20 Nov 2020 04:12:48 GMT',
+34 silly get     'content-type': 'application/json',
+34 silly get     'transfer-encoding': 'chunked',
+34 silly get     connection: 'keep-alive',
+34 silly get     'set-cookie': [ '__cfduid=db6f7da4e14af45eaca43518ccc85d5551605845568; expires=Sun, 20-Dec-20 04:12:48 GMT; path=/; domain=.npmjs.org; HttpOnly; SameSite=Lax' ],
+34 silly get     'cf-ray': '5f4f55b1d8b3dd2a-SIN',
+34 silly get     age: '1264',
+34 silly get     'cache-control': 'public, max-age=300',
+34 silly get     etag: 'W/"d625d921ee92b1f2c4a24ae1e0f07809"',
+34 silly get     'last-modified': 'Tue, 17 Nov 2020 11:58:46 GMT',
+34 silly get     vary: 'accept-encoding, accept',
+34 silly get     'cf-cache-status': 'HIT',
+34 silly get     'cf-request-id': '068573e3270000dd2a053c3000000001',
+34 silly get     'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+34 silly get     server: 'cloudflare',
+34 silly get     'content-encoding': 'gzip' } ]
+35 verbose get saving aws-cdk to /root/.npm/registry.npmjs.org/aws-cdk/.cache.json
+36 verbose correctMkdir /root/.npm correctMkdir not in flight; initializing
+37 silly fetchPackageMetaData Error: No compatible version found: aws-cdk@7.0.0
+37 silly fetchPackageMetaData Valid install targets:
+37 silly fetchPackageMetaData 1.74.0, 1.73.0, 1.72.0, 1.71.0, 1.70.0, 1.69.0, 1.68.0, 1.67.0, 1.66.0, 1.65.0, 1.64.1, 1.64.0, 1.63.0, 1.62.0, 1.61.1, 1.61.0, 1.60.0, 1.59.0, 1.58.0, 1.57.0, 1.56.0, 1.55.0, 1.54.0, 1.53.0, 1.52.0, 1.51.0, 1.50.0, 1.49.1, 1.49.0, 1.48.0, 1.47.1, 1.47.0, 1.46.0, 1.45.0, 1.44.0, 1.43.0, 1.42.1, 1.42.0, 1.41.0, 1.40.0, 1.39.0, 1.38.0, 1.37.0, 1.36.1, 1.36.0, 1.35.0, 1.34.1, 1.34.0, 1.33.1, 1.33.0, 1.32.2, 1.32.1, 1.32.0, 1.31.0, 1.30.0, 1.29.0, 1.28.0, 1.27.0, 1.26.0, 1.25.0, 1.24.0, 1.23.0, 1.22.0, 1.21.1, 1.21.0, 1.20.0, 1.19.0, 1.18.0, 1.17.1, 1.17.0, 1.16.3, 1.16.2, 1.16.1, 1.16.0, 1.15.0, 1.14.0, 1.13.1, 1.13.0, 1.12.0, 1.11.0, 1.10.1, 1.10.0, 1.9.0, 1.8.0, 1.7.0, 1.6.1, 1.6.0, 1.5.0, 1.4.0, 1.3.0, 1.2.0, 1.1.0, 1.0.0, 0.39.0, 0.38.0, 0.37.0, 0.36.2, 0.36.1, 0.36.0, 0.35.0, 0.34.0, 0.33.0, 0.32.0, 0.31.0, 0.30.0, 0.29.0, 0.28.0, 0.27.0, 0.26.0, 0.25.3, 0.25.2, 0.25.1, 0.25.0, 0.24.1, 0.24.0, 0.23.0, 0.22.0, 0.21.0, 0.20.0, 0.19.0, 0.18.1, 0.18.0, 0.17.0, 0.16.0, 0.15.2, 0.15.1, 0.15.0, 0.14.1, 0.14.0, 0.13.0, 0.12.0, 0.11.0, 0.10.0, 0.9.2, 0.9.1, 0.9.0, 0.8.2, 0.8.1, 0.8.0
+37 silly fetchPackageMetaData
+37 silly fetchPackageMetaData     at pickVersionFromRegistryDocument (/usr/lib/node_modules/npm/lib/fetch-package-metadata.js:178:16)
+37 silly fetchPackageMetaData     at /usr/lib/node_modules/npm/node_modules.bundled/iferr/index.js:13:50
+37 silly fetchPackageMetaData     at /usr/lib/node_modules/npm/lib/utils/pulse-till-done.js:20:8
+37 silly fetchPackageMetaData     at saved (/usr/lib/node_modules/npm/lib/cache/caching-client.js:174:7)
+37 silly fetchPackageMetaData     at /usr/lib/node_modules/npm/node_modules.bundled/graceful-fs/polyfills.js:241:18
+37 silly fetchPackageMetaData     at FSReqWrap.oncomplete (fs.js:123:15)
+37 silly fetchPackageMetaData  error for aws-cdk@7.0.0 { Error: No compatible version found: aws-cdk@7.0.0
+37 silly fetchPackageMetaData Valid install targets:
+37 silly fetchPackageMetaData 1.74.0, 1.73.0, 1.72.0, 1.71.0, 1.70.0, 1.69.0, 1.68.0, 1.67.0, 1.66.0, 1.65.0, 1.64.1, 1.64.0, 1.63.0, 1.62.0, 1.61.1, 1.61.0, 1.60.0, 1.59.0, 1.58.0, 1.57.0, 1.56.0, 1.55.0, 1.54.0, 1.53.0, 1.52.0, 1.51.0, 1.50.0, 1.49.1, 1.49.0, 1.48.0, 1.47.1, 1.47.0, 1.46.0, 1.45.0, 1.44.0, 1.43.0, 1.42.1, 1.42.0, 1.41.0, 1.40.0, 1.39.0, 1.38.0, 1.37.0, 1.36.1, 1.36.0, 1.35.0, 1.34.1, 1.34.0, 1.33.1, 1.33.0, 1.32.2, 1.32.1, 1.32.0, 1.31.0, 1.30.0, 1.29.0, 1.28.0, 1.27.0, 1.26.0, 1.25.0, 1.24.0, 1.23.0, 1.22.0, 1.21.1, 1.21.0, 1.20.0, 1.19.0, 1.18.0, 1.17.1, 1.17.0, 1.16.3, 1.16.2, 1.16.1, 1.16.0, 1.15.0, 1.14.0, 1.13.1, 1.13.0, 1.12.0, 1.11.0, 1.10.1, 1.10.0, 1.9.0, 1.8.0, 1.7.0, 1.6.1, 1.6.0, 1.5.0, 1.4.0, 1.3.0, 1.2.0, 1.1.0, 1.0.0, 0.39.0, 0.38.0, 0.37.0, 0.36.2, 0.36.1, 0.36.0, 0.35.0, 0.34.0, 0.33.0, 0.32.0, 0.31.0, 0.30.0, 0.29.0, 0.28.0, 0.27.0, 0.26.0, 0.25.3, 0.25.2, 0.25.1, 0.25.0, 0.24.1, 0.24.0, 0.23.0, 0.22.0, 0.21.0, 0.20.0, 0.19.0, 0.18.1, 0.18.0, 0.17.0, 0.16.0, 0.15.2, 0.15.1, 0.15.0, 0.14.1, 0.14.0, 0.13.0, 0.12.0, 0.11.0, 0.10.0, 0.9.2, 0.9.1, 0.9.0, 0.8.2, 0.8.1, 0.8.0
+37 silly fetchPackageMetaData
+37 silly fetchPackageMetaData     at pickVersionFromRegistryDocument (/usr/lib/node_modules/npm/lib/fetch-package-metadata.js:178:16)
+37 silly fetchPackageMetaData     at /usr/lib/node_modules/npm/node_modules.bundled/iferr/index.js:13:50
+37 silly fetchPackageMetaData     at /usr/lib/node_modules/npm/lib/utils/pulse-till-done.js:20:8
+37 silly fetchPackageMetaData     at saved (/usr/lib/node_modules/npm/lib/cache/caching-client.js:174:7)
+37 silly fetchPackageMetaData     at /usr/lib/node_modules/npm/node_modules.bundled/graceful-fs/polyfills.js:241:18
+37 silly fetchPackageMetaData     at FSReqWrap.oncomplete (fs.js:123:15) code: 'ETARGET' }
+38 silly rollbackFailedOptional Starting
+39 silly rollbackFailedOptional Finishing
+40 silly runTopLevelLifecycles Finishing
+41 silly install printInstalled
+42 verbose stack Error: No compatible version found: aws-cdk@7.0.0
+42 verbose stack Valid install targets:
+42 verbose stack 1.74.0, 1.73.0, 1.72.0, 1.71.0, 1.70.0, 1.69.0, 1.68.0, 1.67.0, 1.66.0, 1.65.0, 1.64.1, 1.64.0, 1.63.0, 1.62.0, 1.61.1, 1.61.0, 1.60.0, 1.59.0, 1.58.0, 1.57.0, 1.56.0, 1.55.0, 1.54.0, 1.53.0, 1.52.0, 1.51.0, 1.50.0, 1.49.1, 1.49.0, 1.48.0, 1.47.1, 1.47.0, 1.46.0, 1.45.0, 1.44.0, 1.43.0, 1.42.1, 1.42.0, 1.41.0, 1.40.0, 1.39.0, 1.38.0, 1.37.0, 1.36.1, 1.36.0, 1.35.0, 1.34.1, 1.34.0, 1.33.1, 1.33.0, 1.32.2, 1.32.1, 1.32.0, 1.31.0, 1.30.0, 1.29.0, 1.28.0, 1.27.0, 1.26.0, 1.25.0, 1.24.0, 1.23.0, 1.22.0, 1.21.1, 1.21.0, 1.20.0, 1.19.0, 1.18.0, 1.17.1, 1.17.0, 1.16.3, 1.16.2, 1.16.1, 1.16.0, 1.15.0, 1.14.0, 1.13.1, 1.13.0, 1.12.0, 1.11.0, 1.10.1, 1.10.0, 1.9.0, 1.8.0, 1.7.0, 1.6.1, 1.6.0, 1.5.0, 1.4.0, 1.3.0, 1.2.0, 1.1.0, 1.0.0, 0.39.0, 0.38.0, 0.37.0, 0.36.2, 0.36.1, 0.36.0, 0.35.0, 0.34.0, 0.33.0, 0.32.0, 0.31.0, 0.30.0, 0.29.0, 0.28.0, 0.27.0, 0.26.0, 0.25.3, 0.25.2, 0.25.1, 0.25.0, 0.24.1, 0.24.0, 0.23.0, 0.22.0, 0.21.0, 0.20.0, 0.19.0, 0.18.1, 0.18.0, 0.17.0, 0.16.0, 0.15.2, 0.15.1, 0.15.0, 0.14.1, 0.14.0, 0.13.0, 0.12.0, 0.11.0, 0.10.0, 0.9.2, 0.9.1, 0.9.0, 0.8.2, 0.8.1, 0.8.0
+42 verbose stack
+42 verbose stack     at pickVersionFromRegistryDocument (/usr/lib/node_modules/npm/lib/fetch-package-metadata.js:178:16)
+42 verbose stack     at /usr/lib/node_modules/npm/node_modules.bundled/iferr/index.js:13:50
+42 verbose stack     at /usr/lib/node_modules/npm/lib/utils/pulse-till-done.js:20:8
+42 verbose stack     at saved (/usr/lib/node_modules/npm/lib/cache/caching-client.js:174:7)
+42 verbose stack     at /usr/lib/node_modules/npm/node_modules.bundled/graceful-fs/polyfills.js:241:18
+42 verbose stack     at FSReqWrap.oncomplete (fs.js:123:15)
+43 verbose cwd /home/ec2-user/environment/cdk/elasticbeanstalk
+44 error Linux 4.14.203-156.332.amzn2.x86_64
+45 error argv "/usr/bin/node" "/bin/npm" "install" "-g" "aws-cdk@7.0.0"
+46 error node v6.17.1
+47 error npm  v3.10.10
+48 error code ETARGET
+49 error notarget No compatible version found: aws-cdk@7.0.0
+49 error notarget Valid install targets:
+49 error notarget 1.74.0, 1.73.0, 1.72.0, 1.71.0, 1.70.0, 1.69.0, 1.68.0, 1.67.0, 1.66.0, 1.65.0, 1.64.1, 1.64.0, 1.63.0, 1.62.0, 1.61.1, 1.61.0, 1.60.0, 1.59.0, 1.58.0, 1.57.0, 1.56.0, 1.55.0, 1.54.0, 1.53.0, 1.52.0, 1.51.0, 1.50.0, 1.49.1, 1.49.0, 1.48.0, 1.47.1, 1.47.0, 1.46.0, 1.45.0, 1.44.0, 1.43.0, 1.42.1, 1.42.0, 1.41.0, 1.40.0, 1.39.0, 1.38.0, 1.37.0, 1.36.1, 1.36.0, 1.35.0, 1.34.1, 1.34.0, 1.33.1, 1.33.0, 1.32.2, 1.32.1, 1.32.0, 1.31.0, 1.30.0, 1.29.0, 1.28.0, 1.27.0, 1.26.0, 1.25.0, 1.24.0, 1.23.0, 1.22.0, 1.21.1, 1.21.0, 1.20.0, 1.19.0, 1.18.0, 1.17.1, 1.17.0, 1.16.3, 1.16.2, 1.16.1, 1.16.0, 1.15.0, 1.14.0, 1.13.1, 1.13.0, 1.12.0, 1.11.0, 1.10.1, 1.10.0, 1.9.0, 1.8.0, 1.7.0, 1.6.1, 1.6.0, 1.5.0, 1.4.0, 1.3.0, 1.2.0, 1.1.0, 1.0.0, 0.39.0, 0.38.0, 0.37.0, 0.36.2, 0.36.1, 0.36.0, 0.35.0, 0.34.0, 0.33.0, 0.32.0, 0.31.0, 0.30.0, 0.29.0, 0.28.0, 0.27.0, 0.26.0, 0.25.3, 0.25.2, 0.25.1, 0.25.0, 0.24.1, 0.24.0, 0.23.0, 0.22.0, 0.21.0, 0.20.0, 0.19.0, 0.18.1, 0.18.0, 0.17.0, 0.16.0, 0.15.2, 0.15.1, 0.15.0, 0.14.1, 0.14.0, 0.13.0, 0.12.0, 0.11.0, 0.10.0, 0.9.2, 0.9.1, 0.9.0, 0.8.2, 0.8.1, 0.8.0
+50 error notarget This is most likely not a problem with npm itself.
+50 error notarget In most cases you or one of your dependencies are requesting
+50 error notarget a package version that doesn't exist.
+51 verbose exit [ 1, true ]

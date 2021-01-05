@@ -1,0 +1,38 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - ARM_TAG=${IMAGE_TAG}arm64
+      - AMD_TAG=${IMAGE_TAG}amd64
+      - echo $REPOSITORY_URI
+      - echo $IMAGE_TAG
+      - echo $AMD_TAG
+      - echo $ARM_TAG
+      - export DOCKER_CLI_EXPERIMENTAL=enabled
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker manifest...
+      - docker manifest create $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:$ARM_TAG $REPOSITORY_URI:$AMD_TAG
+      - docker manifest annotate --arch arm64 $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:$ARM_TAG
+      - docker manifest annotate --arch amd64 $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:$AMD_TAG
+      - docker manifest inspect $REPOSITORY_URI:$IMAGE_TAG
+      - docker manifest push $REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - aws eks update-kubeconfig --name $EKS_NAME --region $AWS_DEFAULT_REGION --role-arn $EKS_ROLE
+      - cd springbootsample
+      - sed -i "s|{ecr_image}|${REPOSITORY_URI}:${IMAGE_TAG}|g" kubernetes.yaml
+      - sed -i "s|{redis_host}|${REDIS_HOST}|g" kubernetes.yaml
+      - sed -i "s|{redis_port}|${REDIS_PORT}|g" kubernetes.yaml
+      - sed -i "s|{rds_url}|jdbc-secretsmanager:mysql://${RDS_HOST}:${RDS_PORT}|g" kubernetes.yaml
+      - sed -i "s|{secret_name}|${RDS_SECRET::-7}|g" kubernetes.yaml
+      - cat kubernetes.yaml
+      - kubectl apply -f kubernetes.yaml
+    

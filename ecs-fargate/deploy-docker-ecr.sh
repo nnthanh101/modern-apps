@@ -1,6 +1,6 @@
-#!/bin/bash
-
-set -euo pipefail
+# !/bin/bash
+*.sh text eol=lf
+# set -euo pipefail
 
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
