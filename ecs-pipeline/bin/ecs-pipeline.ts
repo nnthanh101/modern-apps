@@ -9,12 +9,32 @@ import { ALBStack } from "../lib/alb-stack";
 import { FargateTaskStack } from "../lib/fargate-stack";
 import { EcsPipelineStack } from "../lib/ecs-pipeline-stack";
 import { applicationMetaData } from "../configurations/config";
-
+import { FargateFastAutoscalerStack } from "../lib/fargate-fa-autoscaler";
 const app = new cdk.App();
 
-new EcsPipelineStack(app, "EcsPipelineStack", {
+console.log(process.env.AWS_ACCOUNT + ":" + process.env.AWS_REGION);
+
+const ecsPipelineStack = new EcsPipelineStack(
+  app,
+  applicationMetaData.ecsStackName,
+  {
+    env: {
+      account: process.env.AWS_ACCOUNT,
+      region: process.env.AWS_REGION,
+    },
+  }
+);
+
+new FargateFastAutoscalerStack(app, "FargateFastAutoscalerStack", {
+  // awsCliLayerArn: "",
+  // awsCliLayerVersion: "",
+  vpc: ecsPipelineStack.vpc,
+  // sg: ecsPipelineStack.securityGrp,
+  cluster: ecsPipelineStack.cluster,
+  fgService: ecsPipelineStack.fgservice,
+  disableScaleIn: true,
   env: {
-    account: process.env.AWS_ACCOUNT,
-    region: process.env.AWS_REGION,
-  },
+      account: process.env.AWS_ACCOUNT,
+      region: process.env.AWS_REGION,
+    },
 });

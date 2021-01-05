@@ -1,0 +1,87 @@
+﻿<div class="modal-header" ng-show="mode == 'login'">
+    <h2 class="modal-title">Login to your TravelBuddy account</h2>
+    <span>Not yet registered? <a href="#" ng-click="mode='register'">Sign-up here!</a></span>
+</div>
+
+<div class="modal-header" ng-show="mode == 'register'">
+    <h2 class="modal-title">Register for your TravelBuddy account</h2>
+    <span>Already a member? <a href="#" ng-click="mode='login'">Sign-in here!</a></span>
+</div>
+
+<div class="modal-header" ng-show="mode == 'confirm'">
+        <h2 class="modal-title">Registration Verification Code</h2>
+        <span>We have sent a verification code to your email address. Please check your inbox, and enter the code here:</span>
+    </div>
+    
+    <div class="modal-body" style="font-size:12px;">
+
+
+    <form ng-show="mode == 'login'" name="signin" ng-submit="Login()" role="form">
+        <div class="form-group" ng-class="{ 'has-error': form.username.$dirty && form.username.$error.required }">
+            <label for="username">Email address</label>
+            <input type="text" name="username" id="username" class="form-control" ng-model="username" required />
+            <span ng-show="form.username.$dirty && form.username.$error.required" class="help-block">Please provide your email address</span>
+        </div>
+        <div class="form-group" ng-class="{ 'has-error': form.password.$dirty && form.password.$error.required }">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" class="form-control" ng-model="password" required />
+            <span ng-show="form.password.$dirty && form.password.$error.required" class="help-block">Please provide your password</span>
+        </div>
+        <div class="form-actions">
+            <button type="submit" ng-disabled="form.$invalid || dataLoading" class="btn btn-primary">Login</button>
+            <img ng-if="dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="
+            />
+            <span style="font-size:11px; height:16px;color:#999999">{{statusMessage}}</span>
+        </div>
+    </form>
+
+    <form ng-show="mode == 'confirm'" name="verify" ng-submit="Verify()" role="form">
+        <div class="form-group" ng-class="{ 'has-error': form.confirmCode.$dirty && form.confirmCode.$error.required }">
+            <label for="confirmCode">Verification Code</label>
+            <input type="text" name="confirmCode" id="confirmCode" class="form-control" ng-model="confirmCode" required />
+            <span ng-show="form.confirmCode.$dirty && form.confirmCode.$error.required" class="help-block">Please enter the verification code sent to your email address</span>
+        </div>
+        <div class="form-actions">
+            <button type="submit" ng-disabled="form.$invalid || dataLoading" class="btn btn-primary">Verify</button>
+            <img ng-if="dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="
+            />
+            <span style="font-size:11px; height:16px;color:#999999">{{statusMessage}}</span>
+        </div>
+    </form>
+
+
+    <form ng-show="mode=='register'" name="register" ng-submit="Register()" role="form">
+        <div class="form-group">
+            <label for="registerFirstname">First name:</label>
+            <input type="text" id="registerFirstname" name="registerFirstname" ng-model="registerFirstname" class="form-control" placeholder="Enter first name"
+                required autocomplete="off" value="">
+            <span ng-show="form.registerFirstname.$dirty && form.registerFirstname.$error.required" class="help-block">Please provide your first name</span>
+        </div>
+        <div class="form-group">
+            <label for="registerLastname">Last name:</label>
+            <input type="text" name="registerLastname" id="registerLastname" ng-model="registerLastname" class="form-control" placeholder="Enter last name"
+                required autocomplete="off" value="">
+            <span ng-show="form.registerLastname.$dirty && form.registerLastname.$error.required" class="help-block">Please provide your last name</span>
+        </div>
+        <div class="form-group">
+            <label for="registerEmail">Email address:</label>
+            <input type="text" name="registerEmail" id="registerEmail" ng-model="registerEmail" class="form-control" placeholder="Enter email"
+                required autocomplete="off" value="">
+            <span ng-show="form.registerEmail.$dirty && form.registerEmail.$error.required" class="help-block">Please provide your email address</span>
+        </div>
+        <div class="form-group">
+            <label for="registerPassword">Password:</label>
+            <input type="password" name="registerPassword" id="registerPassword" ng-model="registerPassword" class="form-control" placeholder="Enter password"
+                required zautocomplete="off" value="">
+            <span ng-show="form.registerPassword.$dirty && form.registerPassword.$error.required" class="help-block">Please provide your password</span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" ng-disabled="form.$invalid || dataLoading" class="btn btn-primary">Register</button>
+            <img ng-if="dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="
+            />
+            <span style="font-size:11px; height:16px;color:#999999">{{statusMessage}}</span>
+        </div>
+    </form>
+
+</div>
