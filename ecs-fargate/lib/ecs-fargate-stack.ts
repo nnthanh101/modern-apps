@@ -160,7 +160,7 @@ export class EcsFargateStack extends cdk.Stack {
     //         commands: [
     //           'echo "In Post-Build Stage"',
     //           'cd ..',
-    //           "printf '[{\"name\":\"flask-app\",\"imageUri\":\"%s\"}]' $ECR_REPO_URI:$TAG > imagedefinitions.json",
+    //           "printf '[{\"name\":\"react\",\"imageUri\":\"%s\"}]' $ECR_REPO_URI:$TAG > imagedefinitions.json",
     //           "pwd; ls -al; cat imagedefinitions.json"
     //         ]
     //       }

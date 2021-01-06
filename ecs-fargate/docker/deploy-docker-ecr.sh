@@ -1,6 +1,6 @@
-#!/bin/bash
-
-set -euo pipefail
+# !/bin/bash
+*.sh text eol=lf
+# set -euo pipefail
 
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
@@ -39,7 +39,7 @@ echo $DOCKER_REGISTRY_PASSWORD | docker login --username $DOCKER_REGISTRY_USERNA
 ## Build docker
 docker rmi -f ${ECR_REPOSITORY}
 docker rmi -f ${CONTAINER_REGISTRY_URL}/${ECR_REPOSITORY}
-docker build -t ${ECR_REPOSITORY} -f ${ECR_REPOSITORY}/Dockerfile springboot
+docker build -t ${ECR_REPOSITORY} -f Dockerfile .
 
 ## Tag for ECR
 docker tag ${ECR_REPOSITORY} ${CONTAINER_REGISTRY_URL}/${ECR_REPOSITORY}:latest
@@ -55,7 +55,7 @@ docker push ${CONTAINER_REGISTRY_URL}/${ECR_REPOSITORY}
 ended_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
 echo "#########################################################"
-echo -e "${RED} [FINISH] Deploy Docker to ECR & DockerHub - finished at ${ended_time} - ${started_time} ${NC}"
+echo -e "${RED} [FINISH] Deploy SpringBoot Docker to ECR & DockerHub - finished at ${ended_time} - ${started_time} ${NC}"
 echo "#########################################################"
 echo
 

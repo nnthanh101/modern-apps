@@ -1,12 +1,12 @@
 #!/bin/bash
-export PROJECT_ID=ecs-fargate
+export PROJECT_ID=devsecops
 
 ## 1.1 Configuring AWS
 ## MacOS
 # export AWS_ACCOUNT=$(aws sts get-caller-identity | jq -r '.Account' | tr -d '\n')
 # export AWS_REGION=${AWS_REGION:-"ap-southeast-1"}
 ## Cloud9
-export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
+export AWS_ACCOUNT=$(aws sts get-caller-identity --output text --query Account)
 export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
 
 ## 2. AWS Infra: S3, VPC 
@@ -29,7 +29,7 @@ export ECR_REPOSITORY=${ECR_REPOSITORY_FRONTEND}
 export DOCKER_REGISTRY_NAMESPACE=nnthanh101
 export HTTPS_GIT_REPO_URL=https://github.com/nnthanh101/cdk.git
 export DOCKER_REGISTRY_USERNAME=nnthanh101
-export DOCKER_REGISTRY_PASSWORD=__DOCKERHUB_PASSWORD__
+# export DOCKER_REGISTRY_PASSWORD=<_DOCKERHUB_PASSWORD__
 export DOCKER_REGISTRY_EMAIL=nnthanh101@gmail.com
 
 ## 4. Primary domain
