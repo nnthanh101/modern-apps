@@ -104,3 +104,4 @@ dist
 .tern-port
 
 amplify/public/
+cdk.context.json
