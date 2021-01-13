@@ -18,9 +18,9 @@ export class EksClusterStack extends cdk.Stack {
      */  
     const vpc = getOrCreateVpc(this);
 
-    // /**
-    //  * Create a new VPC with single NAT Gateway
-    //  */
+    /**
+     * Create a new VPC with single NAT-Gateway
+     */
     // const vpc = new ec2.Vpc(this, 'EKS-VPC', {
     //   cidr: '10.20.0.0/18',
     //   natGateways: 1

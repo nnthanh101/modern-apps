@@ -1,6 +1,6 @@
 {
   "name": "eks-cluster",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "bin": {
     "eks-cluster": "bin/eks-cluster.js"
   },
@@ -11,27 +11,27 @@
     "cdk": "cdk"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "^1.49.1",
-    "@types/jest": "^25.2.3",
-    "@types/node": "^10.17.5",
-    "aws-cdk": "^1.49.1",
-    "jest": "^25.5.0",
-    "ts-jest": "^25.5.1",
-    "ts-node": "^8.10.2",
-    "typescript": "^3.7.5"
+    "@aws-cdk/assert": "1.84.0",
+    "@types/jest": "^26.0.10",
+    "@types/node": "10.17.27",
+    "jest": "^26.4.2",
+    "ts-jest": "^26.2.0",
+    "aws-cdk": "1.84.0",
+    "ts-node": "^9.0.0",
+    "typescript": "~3.9.7"
   },
   "dependencies": {
-    "@aws-cdk/aws-autoscaling": "^1.51.0",
-    "@aws-cdk/aws-codebuild": "^1.51.0",
-    "@aws-cdk/aws-codecommit": "^1.51.0",
-    "@aws-cdk/aws-codepipeline": "^1.51.0",
-    "@aws-cdk/aws-codepipeline-actions": "^1.51.0",
-    "@aws-cdk/aws-ec2": "^1.51.0",
-    "@aws-cdk/aws-ecr": "^1.51.0",
-    "@aws-cdk/aws-eks": "^1.51.0",
-    "@aws-cdk/aws-events-targets": "^1.51.0",
-    "@aws-cdk/aws-iam": "^1.51.0",
-    "@aws-cdk/core": "1.49.1",
+    "@aws-cdk/aws-autoscaling": "^1.84.0",
+    "@aws-cdk/aws-codebuild": "^1.84.0",
+    "@aws-cdk/aws-codecommit": "^1.84.0",
+    "@aws-cdk/aws-codepipeline": "^1.84.0",
+    "@aws-cdk/aws-codepipeline-actions": "^1.84.0",
+    "@aws-cdk/aws-ec2": "^1.84.0",
+    "@aws-cdk/aws-ecr": "^1.84.0",
+    "@aws-cdk/aws-eks": "^1.84.0",
+    "@aws-cdk/aws-events-targets": "^1.84.0",
+    "@aws-cdk/aws-iam": "^1.84.0",
+    "@aws-cdk/core": "1.84.0",
     "dotenv": "^8.2.0",
     "source-map-support": "^0.5.16"
   }
