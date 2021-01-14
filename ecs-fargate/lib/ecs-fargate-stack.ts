@@ -11,6 +11,8 @@ import * as codecommit           from '@aws-cdk/aws-codecommit';
 import * as codepipeline         from '@aws-cdk/aws-codepipeline';
 import * as codepipeline_actions from '@aws-cdk/aws-codepipeline-actions';
 import * as elb                  from '@aws-cdk/aws-elasticloadbalancingv2';
+import * as ats                  from '@aws-cdk/aws-applicationautoscaling';
+import * as dotenv               from "dotenv";
 
 
 /**
@@ -20,6 +22,7 @@ export class EcsFargateStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    dotenv.config();
     // The code that defines your stack goes here
     /**
      * 1. Create a new VPC with NO NAT Gateway --> reduce cost!
@@ -107,8 +110,7 @@ export class EcsFargateStack extends cdk.Stack {
      * codelocation: "springboot" --> /springboot/*
      */
     const ecsContainer = ecsFargateTaskDefinition.addContainer('ECS-Task-SpringBoot', {
-      image:ecs.ContainerImage.fromEcrRepository(ecrRepo,"latest"),
-      // image: ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
+      image: ecs.ContainerImage.fromRegistry("amazon/amazon-ecs-sample"),
       logging: ecs.LogDriver.awsLogs({
                 streamPrefix: `${this.stackName}ECSContainerLog`,
               })
@@ -173,6 +175,21 @@ export class EcsFargateStack extends cdk.Stack {
     //   scaleInCooldown: cdk.Duration.seconds(60),
     //   scaleOutCooldown: cdk.Duration.seconds(60)
     // });  
+
+    const ecsFargateServiceScaling = new ats.ScalableTarget(this, 'ecsFargateServiceScaling', {
+      scalableDimension: 'ecs:service:DesiredCount',
+      minCapacity: 2,
+      maxCapacity: 12,
+      serviceNamespace: ats.ServiceNamespace.ECS,
+      resourceId: `service/${cluster.clusterName}/${ecsFargateService.serviceName}`
+    });
+
+    ecsFargateServiceScaling.scaleToTrackMetric('scaleCPU', {
+      customMetric: ecsFargateService.metricCpuUtilization(),
+      targetValue: 70,
+      scaleInCooldown: cdk.Duration.minutes(1),
+      scaleOutCooldown: cdk.Duration.minutes(3)
+    });
 
 
     /**
@@ -243,7 +260,7 @@ export class EcsFargateStack extends cdk.Stack {
           post_build: {
             commands: [
               'echo "In Post-Build Stage"',
-              "printf '[{\"name\":\"WEB\",\"imageUri\":\"%s\"}]' $ECR_REPO_URI:$TAG > imagedefinitions.json",
+              "printf '[{\"name\":\"ECS-Task-SpringBoot\",\"imageUri\":\"%s\"}]' $ECR_REPO_URI:$TAG > imagedefinitions.json",
               "pwd; ls -al; cat imagedefinitions.json"
             ]
           }
