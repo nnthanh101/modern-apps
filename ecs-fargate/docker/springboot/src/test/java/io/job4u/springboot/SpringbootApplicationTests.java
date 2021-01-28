@@ -1,10 +1,10 @@
-package io.job4u.starter;
+package io.job4u.springboot;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class StarterApplicationTests {
+class SpringbootApplicationTests {
 
 	@Test
 	void contextLoads() {
