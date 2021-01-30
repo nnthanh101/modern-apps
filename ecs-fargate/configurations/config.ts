@@ -24,7 +24,7 @@ export const applicationMetaData = {
       TgrAllowPort:80,
       publicLoadBalancer: false,
       reactCodeLocation: "docker/nextjs-docker", 
-      nodeJsCodeLocation:"docker/nodejs_helloworld_docker",
+      nodeJsCodeLocation:"docker/nodejs_docker",
       clusterName: "ECS_Cluster",
 
       /** Scaler */
