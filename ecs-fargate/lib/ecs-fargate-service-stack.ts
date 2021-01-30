@@ -38,8 +38,8 @@ export interface EcsFargateServiceStackProps extends cdk.StackProps {
 // export class EcsFargateServiceStack extends FargateService {
 export class EcsFargateServiceStack extends cdk.Stack {
   readonly fgservice: FargateService;
-  constructor(scope: cdk.Construct, id: string, props: EcsFargateServiceStackProps) {
-    super(scope, id, props);
+  constructor(parent: cdk.Construct, id: string, props: EcsFargateServiceStackProps) {
+    super(parent, id, props);
     
     /**
      * 1.ECS Task
@@ -50,12 +50,7 @@ export class EcsFargateServiceStack extends cdk.Stack {
       roleName: props.roleNameFargate ?? id + "-Role",
     });
     
-    // const cluster = Cluster.fromClusterAttributes(this, "cluster-import", {
-    //   clusterName: props.cluster.clusterName,
-    //   vpc: props.vpc,
-    //   securityGroups: [props.securityGrp]
-    // });
-
+ 
     const ecsPolicy: Policy = new Policy(this, "-Policy", {
       policyName: props.policyNameFargate ?? id + "-Policy",
       statements: [
@@ -97,8 +92,8 @@ export class EcsFargateServiceStack extends cdk.Stack {
       this,
       id + "-FargateTaskDef",
       {
-        memoryLimitMiB: props.memoryLimitMiB ?? 512,
-        cpu: props.cpu ?? 256,
+        memoryLimitMiB: props.memoryLimitMiB ,
+        cpu: props.cpu ,
         executionRole: taskRole,
       }
     );
@@ -107,15 +102,8 @@ export class EcsFargateServiceStack extends cdk.Stack {
     const appContainer = new ContainerDefinition(
       this,
       id + "-ContainerDef",
-      {
-        image: ContainerImage.fromEcrRepository(
-          Repository.fromRepositoryName(
-            this,
-            id + "RepoName",
-            props.codelocation
-          )
-        ),
-        // image: ContainerImage.fromAsset(props.codelocation),
+      { 
+        image: ContainerImage.fromAsset(props.codelocation),
         taskDefinition: taskDef,
         logging: new AwsLogDriver({
           streamPrefix: id,
@@ -134,15 +122,13 @@ export class EcsFargateServiceStack extends cdk.Stack {
     this.fgservice = new FargateService(this, id + "-FargateService", {
       cluster: props.cluster,
       taskDefinition: taskDef,
-      desiredCount: props.desiredCount ?? 2,
-      maxHealthyPercent: props.maxHealthyPercent ?? 200,
-      minHealthyPercent: props.minHealthyPercent ?? 100,
+      desiredCount: props.desiredCount ,
+      maxHealthyPercent: props.maxHealthyPercent ,
+      minHealthyPercent: props.minHealthyPercent ,
       // securityGroup: props.securityGrp,
       assignPublicIp: true,
-      vpcSubnets: {
-        // FIXME There are no 'Private' subnet groups in this VPC. Available types: Public
-        // subnetType: props.subnetPrivate ? SubnetType.PRIVATE: SubnetType.PUBLIC
-        subnetType: props.subnetPrivate ? SubnetType.PUBLIC: SubnetType.PUBLIC
+      vpcSubnets: { 
+        subnetType: props.subnetPrivate ? SubnetType.PRIVATE: SubnetType.PUBLIC
       }
     });
 
@@ -150,7 +136,7 @@ export class EcsFargateServiceStack extends cdk.Stack {
      * FIXME Connect service to TargetGroup
      * NOTE: This does not introduce a cycle because ECS Services are self-registering.
      * (they point to the TargetGroup instead of the other way around).
-     */
+     */ 
     // props.targetGroup.addTarget(this.fgservice);
 
     props.loadBalancerListener.addTargets(id + "-TargetGroup", {

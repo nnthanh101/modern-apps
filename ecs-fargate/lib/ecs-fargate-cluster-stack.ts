@@ -7,7 +7,7 @@ import * as ecs from "@aws-cdk/aws-ecs";
  * @description ecs.ClusterProps https://docs.aws.amazon.com/cdk/api/latest/typescript/api/aws-ecs/clusterprops.html#aws_ecs_ClusterProps
  */
 export interface EcsFargateClusterStackProps extends cdk.StackProps {
-  readonly vpc: ec2.Vpc;
+  readonly vpc: ec2.IVpc;
   readonly clusterName?: string;
   readonly containerInsights?: boolean;
 
@@ -26,20 +26,21 @@ export interface EcsFargateClusterStackProps extends cdk.StackProps {
  * VPC >> ECS Cluster
  * Shared Load Balancer: create an empty TargetGroup in the Shared ALB, and register a Service into it in the ServiceStack.
  */
-export class EcsFargateClusterStack extends cdk.Stack {
+export class EcsFargateClusterStack extends cdk.Construct {
   readonly cluster: ecs.Cluster;
   readonly alb: elb2.ApplicationLoadBalancer;
   readonly fgservice: ecs.FargateService;
   readonly loadBalancerListener: elb2.ApplicationListener;
   public readonly targetGroup: elb2.ApplicationTargetGroup;
 
-  constructor(scope: cdk.Construct, id: string, props: EcsFargateClusterStackProps) {
-    super(scope, id, props);
+  constructor(parent: cdk.Construct, id: string, props: EcsFargateClusterStackProps) {
+    
+    super(parent, id );
       
     /**
      * 1. ECS Cluster
      */
-    this.cluster = new ecs.Cluster(this, id + "-Cluster", {
+    this.cluster = new ecs.Cluster(parent, id + "-Cluster", {
       vpc: props.vpc,
       clusterName: props.clusterName ?? id + "-Cluster",
       containerInsights: props.containerInsights ?? true
@@ -49,10 +50,10 @@ export class EcsFargateClusterStack extends cdk.Stack {
      * 2. ApplicationLoadBalancer
      */
     this.alb = new elb2.ApplicationLoadBalancer(
-      this,
+        parent,
       id + '-alb',
       {
-        vpc: props.vpc,
+        vpc: props.vpc, 
         internetFacing: true,
         ipAddressType: elb2.IpAddressType.IPV4,
         securityGroup: props.securityGrp,
@@ -67,7 +68,7 @@ export class EcsFargateClusterStack extends cdk.Stack {
      * 3. Application TargetGroup
      */
     const targetGrp = new elb2.ApplicationTargetGroup(
-      this,
+        parent,
       id + '-TGrp',
       {
         vpc: props.vpc,
@@ -92,7 +93,7 @@ export class EcsFargateClusterStack extends cdk.Stack {
     /**
      * 5. CloudFormation Output
      */
-    new cdk.CfnOutput(this, "ApplicationLoadBalancer DNS", {
+    new cdk.CfnOutput(parent, "ApplicationLoadBalancer DNS", {
       value: this.alb.loadBalancerDnsName,
     });
 

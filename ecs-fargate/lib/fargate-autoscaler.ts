@@ -10,11 +10,11 @@ import * as sns from "@aws-cdk/aws-sns";
 
 import { applicationMetaData } from "../configurations/config";
 
-const AWSCLI_LAYER_ARN = "arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-awscli";
-const AWSCLI_LAYER_VERSION = "1.18.142";
+// const AWSCLI_LAYER_ARN = "arn:aws:serverlessrepo:us-east-1:903779448426:applications/lambda-layer-awscli";
+// const AWSCLI_LAYER_VERSION = "1.18.142";
 
 export interface FargateAutoscalerProps extends core.StackProps {
-  readonly vpc: ec2.Vpc;
+  readonly vpc: ec2.IVpc;
   readonly cluster: ecs.Cluster;
   readonly fgService: ecs.FargateService;
   readonly scaleType: string;
@@ -27,7 +27,7 @@ export interface FargateAutoscalerProps extends core.StackProps {
 
 export class FargateAutoscalerStack extends core.Stack {
   constructor(
-    parent: core.App,
+    parent: core.Construct,
     name: string,
     props: FargateAutoscalerProps
   ) {
@@ -75,8 +75,8 @@ export class FargateAutoscalerStack extends core.Stack {
       type: "AWS::Serverless::Application",
       properties: {
         Location: {
-          ApplicationId: props.awsCliLayerArn ?? AWSCLI_LAYER_ARN,
-          SemanticVersion: props.awsCliLayerVersion ?? AWSCLI_LAYER_VERSION,
+          ApplicationId: props.awsCliLayerArn ,
+          SemanticVersion: props.awsCliLayerVersion ,
         },
         Parameters: {},
       },

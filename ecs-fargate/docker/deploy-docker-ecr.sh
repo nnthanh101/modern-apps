@@ -26,7 +26,7 @@ _logger "[+] ECR_REPO="${CONTAINER_REGISTRY_URL}/${ECR_REPOSITORY}
 ECR_REPO=$(aws ecr describe-repositories | jq -c ".repositories[] | select(.repositoryName | contains(\"${ECR_REPOSITORY}\")) | .repositoryName")
 if [ -z "${ECR_REPO}" ]; then
   aws ecr create-repository --repository-name ${ECR_REPOSITORY}
-else
+else 
   _logger "[+] Skip creating ECR ${ECR_REPO}"
 fi
 
@@ -34,7 +34,7 @@ fi
 aws ecr get-login-password | docker login --password-stdin -u AWS $CONTAINER_REGISTRY_URL
 
 ## Login to DockerHub
-echo $DOCKER_REGISTRY_PASSWORD | docker login --username $DOCKER_REGISTRY_USERNAME --password-stdin
+# echo $DOCKER_REGISTRY_PASSWORD | docker login --username $DOCKER_REGISTRY_USERNAME --password-stdin
 
 ## Build docker
 docker rmi -f ${ECR_REPOSITORY}
@@ -58,7 +58,6 @@ echo "#########################################################"
 echo -e "${RED} [FINISH] Deploy SpringBoot Docker to ECR & DockerHub - finished at ${ended_time} - ${started_time} ${NC}"
 echo "#########################################################"
 echo
-
 
 # _logger "[+] Execute commands inside of the Docker ..."
 # docker run -it -e "AWS_REGION=$AWS_REGION" --rm \
