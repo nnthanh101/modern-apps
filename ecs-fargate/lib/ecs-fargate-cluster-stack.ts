@@ -1,19 +1,19 @@
 import * as cdk from "@aws-cdk/core";
-import * as ec2 from "@aws-cdk/aws-ec2";
-import * as elb2 from "@aws-cdk/aws-elasticloadbalancingv2";
-import * as ecs from "@aws-cdk/aws-ecs";
+import { IVpc, SecurityGroup, SubnetType } from "@aws-cdk/aws-ec2";
+import { ApplicationLoadBalancer, ApplicationListener, ApplicationTargetGroup, IpAddressType, ApplicationProtocol, TargetType } from "@aws-cdk/aws-elasticloadbalancingv2";
+import { Cluster, FargateService } from "@aws-cdk/aws-ecs";
 
 /**
  * @description ecs.ClusterProps https://docs.aws.amazon.com/cdk/api/latest/typescript/api/aws-ecs/clusterprops.html#aws_ecs_ClusterProps
  */
 export interface EcsFargateClusterStackProps extends cdk.StackProps {
-  readonly vpc: ec2.IVpc;
+  readonly vpc: IVpc;
   readonly clusterName?: string;
   readonly containerInsights?: boolean;
 
   readonly loadBalancerName?: string;
-  readonly securityGrp: ec2.SecurityGroup;
-  
+  readonly securityGrp: SecurityGroup;
+
   readonly targetGroupName?: string;
   readonly allowPort: number;
 
@@ -27,20 +27,20 @@ export interface EcsFargateClusterStackProps extends cdk.StackProps {
  * Shared Load Balancer: create an empty TargetGroup in the Shared ALB, and register a Service into it in the ServiceStack.
  */
 export class EcsFargateClusterStack extends cdk.Construct {
-  readonly cluster: ecs.Cluster;
-  readonly alb: elb2.ApplicationLoadBalancer;
-  readonly fgservice: ecs.FargateService;
-  readonly loadBalancerListener: elb2.ApplicationListener;
-  public readonly targetGroup: elb2.ApplicationTargetGroup;
+  readonly cluster: Cluster;
+  readonly alb: ApplicationLoadBalancer;
+  readonly fgservice: FargateService;
+  readonly loadBalancerListener: ApplicationListener;
+  public readonly targetGroup: ApplicationTargetGroup;
 
   constructor(parent: cdk.Construct, id: string, props: EcsFargateClusterStackProps) {
-    
-    super(parent, id );
-      
+
+    super(parent, id);
+
     /**
      * 1. ECS Cluster
      */
-    this.cluster = new ecs.Cluster(parent, id + "-Cluster", {
+    this.cluster = new Cluster(parent, id + "-Cluster", {
       vpc: props.vpc,
       clusterName: props.clusterName ?? id + "-Cluster",
       containerInsights: props.containerInsights ?? true
@@ -49,16 +49,16 @@ export class EcsFargateClusterStack extends cdk.Construct {
     /**
      * 2. ApplicationLoadBalancer
      */
-    this.alb = new elb2.ApplicationLoadBalancer(
-        parent,
+    this.alb = new ApplicationLoadBalancer(
+      parent,
       id + '-alb',
       {
-        vpc: props.vpc, 
+        vpc: props.vpc,
         internetFacing: true,
-        ipAddressType: elb2.IpAddressType.IPV4,
+        ipAddressType: IpAddressType.IPV4,
         securityGroup: props.securityGrp,
         vpcSubnets: props.vpc.selectSubnets({
-          subnetType: ec2.SubnetType.PUBLIC,
+          subnetType: SubnetType.PUBLIC,
         }),
         loadBalancerName: props.loadBalancerName ?? id + '-alb',
       }
@@ -67,14 +67,14 @@ export class EcsFargateClusterStack extends cdk.Construct {
     /**
      * 3. Application TargetGroup
      */
-    const targetGrp = new elb2.ApplicationTargetGroup(
-        parent,
+    const targetGrp = new ApplicationTargetGroup(
+      parent,
       id + '-TGrp',
       {
         vpc: props.vpc,
-        protocol: elb2.ApplicationProtocol.HTTP,
+        protocol: ApplicationProtocol.HTTP,
         port: props.allowPort,
-        targetType: elb2.TargetType.IP,
+        targetType: TargetType.IP,
         targetGroupName: props.targetGroupName ?? id + '-TGrp',
       }
     );
@@ -82,14 +82,14 @@ export class EcsFargateClusterStack extends cdk.Construct {
     /**
      * 4. Application addListener
      */
-    
+
     this.loadBalancerListener = this.alb.addListener("Listener", {
-      protocol: elb2.ApplicationProtocol.HTTP,
+      protocol: ApplicationProtocol.HTTP,
       port: props.allowPort,
       open: true,
       defaultTargetGroups: [targetGrp],
     });
-    
+
     /**
      * 5. CloudFormation Output
      */

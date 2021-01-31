@@ -27,7 +27,7 @@ export interface FargateAutoscalerProps extends core.StackProps {
 
 export class FargateAutoscalerStack extends core.Stack {
   constructor(
-    parent: core.Construct,
+    parent: core.App,
     name: string,
     props: FargateAutoscalerProps
   ) {

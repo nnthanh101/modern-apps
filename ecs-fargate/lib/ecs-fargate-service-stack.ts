@@ -1,10 +1,9 @@
-import * as cdk from "@aws-cdk/core";
-import { Repository } from "@aws-cdk/aws-ecr";
-import { Vpc, SecurityGroup, SubnetType } from "@aws-cdk/aws-ec2";
+import * as cdk from "@aws-cdk/core"; 
+import {   SubnetType } from "@aws-cdk/aws-ec2";
 import { AwsLogDriver } from "@aws-cdk/aws-ecs";
-import { Cluster, FargateService, FargateServiceProps, FargateTaskDefinition, ContainerDefinition, ContainerImage, Protocol} from "@aws-cdk/aws-ecs";
+import { Cluster, FargateService,  FargateTaskDefinition, ContainerDefinition, ContainerImage, Protocol} from "@aws-cdk/aws-ecs";
 import { ServicePrincipal, Role, Policy, PolicyStatement, Effect, ManagedPolicy} from "@aws-cdk/aws-iam";
-import { ApplicationTargetGroup, ApplicationLoadBalancer, IpAddressType, ApplicationProtocol, TargetType, ApplicationListener} from "@aws-cdk/aws-elasticloadbalancingv2";
+import {  ApplicationLoadBalancer, ApplicationListener} from "@aws-cdk/aws-elasticloadbalancingv2";
 
 export interface EcsFargateServiceStackProps extends cdk.StackProps {
   readonly cluster: Cluster;
@@ -31,27 +30,27 @@ export interface EcsFargateServiceStackProps extends cdk.StackProps {
     [key: string]: string;
   };
 }
-
+ 
 /**
  * ECS-Fargate Service Stack
  */
 // export class EcsFargateServiceStack extends FargateService {
-export class EcsFargateServiceStack extends cdk.Stack {
+export class EcsFargateServiceStack extends cdk.Construct {
   readonly fgservice: FargateService;
   constructor(parent: cdk.Construct, id: string, props: EcsFargateServiceStackProps) {
-    super(parent, id, props);
+    super(parent, id);
     
     /**
      * 1.ECS Task
      **/
-    const taskRole = new Role(this, id + "-Role", {
+    const taskRole = new Role(parent, id + "-Role", {
       assumedBy: new ServicePrincipal("ecs-tasks.amazonaws.com"),
       description: "Adds managed policies to ecs role for ecr image pulls and execution",
       roleName: props.roleNameFargate ?? id + "-Role",
     });
     
  
-    const ecsPolicy: Policy = new Policy(this, "-Policy", {
+    const ecsPolicy: Policy = new Policy(parent,id+ "-Policy", {
       policyName: props.policyNameFargate ?? id + "-Policy",
       statements: [
         new PolicyStatement({
@@ -65,7 +64,7 @@ export class EcsFargateServiceStack extends cdk.Stack {
             "logs:CreateLogGroup",
             "logs:PutLogEvents",
           ],
-          resources: ["*"],
+          resources: ["*"], 
         }),
       ],
     });
@@ -89,7 +88,7 @@ export class EcsFargateServiceStack extends cdk.Stack {
 
     /** 5.1. Create ECS Task definition */
     const taskDef = new FargateTaskDefinition(
-      this,
+      parent,
       id + "-FargateTaskDef",
       {
         memoryLimitMiB: props.memoryLimitMiB ,
@@ -100,7 +99,7 @@ export class EcsFargateServiceStack extends cdk.Stack {
 
     /** 5.2. Add Container Docker-Image */
     const appContainer = new ContainerDefinition(
-      this,
+      parent,
       id + "-ContainerDef",
       { 
         image: ContainerImage.fromAsset(props.codelocation),
@@ -119,7 +118,7 @@ export class EcsFargateServiceStack extends cdk.Stack {
     });
 
     /** 6. Create Fargate Service */
-    this.fgservice = new FargateService(this, id + "-FargateService", {
+    this.fgservice = new FargateService(parent, id + "-FargateService", {
       cluster: props.cluster,
       taskDefinition: taskDef,
       desiredCount: props.desiredCount ,

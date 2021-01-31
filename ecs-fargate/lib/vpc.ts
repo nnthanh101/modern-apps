@@ -1,7 +1,7 @@
-import cdk = require("@aws-cdk/core");
-import * as ec2 from "@aws-cdk/aws-ec2";
+import * as cdk from "@aws-cdk/core";
+import {Vpc as ec2Vpc,IVpc,SecurityGroup,SubnetType,GatewayVpcEndpointAwsService,CfnEIP,Port} from "@aws-cdk/aws-ec2";
 
-export interface VpcProps {
+export interface VpcStackProps extends cdk.StackProps {
   readonly cidr?: string;
   readonly maxAzs?: number;
   readonly natGateways?: number;
@@ -23,72 +23,86 @@ export interface VpcProps {
  * Creating VPC
  */
 export class Vpc extends cdk.Construct {
-  public readonly vpc: ec2.IVpc; 
-  readonly securityGrp: ec2.SecurityGroup;
+  public readonly vpc: IVpc;
+  readonly securityGrp: SecurityGroup;
 
-  constructor(parent: cdk.Construct, id: string, props: VpcProps) {
-
-    super(parent, id );
+  constructor(parent: cdk.Construct, id: string, props: VpcStackProps) {
+    super(parent, id);
 
     if (props.useExistVpc === '1') {
       if (props.useDefaultVpc === '1') {
-        this.vpc = ec2.Vpc.fromLookup(parent, id + '-VPC', { isDefault: true });
+        this.vpc = ec2Vpc.fromLookup(parent, id + '-VPC', { isDefault: true });
       } else {
         if (props.vpcId) {
-          this.vpc = ec2.Vpc.fromLookup(parent, id + '-VPC', { isDefault: false, vpcId: props.vpcId });
+          this.vpc = ec2Vpc.fromLookup(parent, id + '-VPC', { isDefault: false, vpcId: props.vpcId });
         } else {
-          this.vpc = this.createNewVpc(parent,props, id);
-        }
-      } 
+         this.vpc= new ec2Vpc(parent, id + '-VPC', {
+          cidr: props.cidr,
+          maxAzs: props.maxAzs,
+          subnetConfiguration: [
+            {
+              name: 'Public-DMZ',
+              subnetType: SubnetType.PUBLIC,
+            },
+            {
+              name: 'Private-Services',
+              subnetType: SubnetType.PRIVATE,
+            },
+          ],
+          gatewayEndpoints: {
+            S3: {
+              service: GatewayVpcEndpointAwsService.S3,
+            },
+          },
+        });
+        } 
+      }
     } else {
-      this.vpc = this.createNewVpc(parent,props, id);
+      this.vpc = new ec2Vpc(parent, id + '-VPC', {
+        cidr: props.cidr,
+        maxAzs: props.maxAzs,
+        subnetConfiguration: [
+          {
+            name: 'Public-DMZ',
+            subnetType: SubnetType.PUBLIC,
+          },
+          {
+            name: 'Private-Services',
+            subnetType: SubnetType.PRIVATE,
+          },
+        ],
+        gatewayEndpoints: {
+          S3: {
+            service: GatewayVpcEndpointAwsService.S3,
+          },
+        },
+      });
     }
 
     /** Get Elastic IP */
     this.vpc.publicSubnets.forEach((subnet, index) => {
       // Find the Elastic IP
-      const EIP = subnet.node.tryFindChild('EIP') as ec2.CfnEIP
+      const EIP = subnet.node.tryFindChild('EIP') as CfnEIP
       new cdk.CfnOutput(parent, `output-eip-${index}`, { value: EIP.ref });
     });
 
     /**
    * Security Group
    */
-    this.securityGrp = new ec2.SecurityGroup(parent, id + '-SecurityGroup', {
+    this.securityGrp = new SecurityGroup(parent, id + '-SecurityGroup', {
       allowAllOutbound: true,
       securityGroupName: 'HttpPublicSecurityGroup',
-      vpc: this.vpc,
+      vpc: this.vpc, 
     });
 
     var self = this;
-    props.ports.forEach(function(val){
+    props.ports.forEach(function (val) { 
       if (val != 0) {
-        self.securityGrp.connections.allowFromAnyIpv4(ec2.Port.tcp(val));
+        self.securityGrp.connections.allowFromAnyIpv4(Port.tcp(val));
       }
     });
 
 
   }
-
-  private createNewVpc(parent:cdk.Construct, props: VpcProps, id: string): ec2.IVpc {
-    return new ec2.Vpc(parent, id + '-VPC', {
-      cidr: props.cidr  ,
-      maxAzs: props.maxAzs  ,
-      subnetConfiguration: [
-        {
-          name: 'Public-DMZ', 
-          subnetType: ec2.SubnetType.PUBLIC,
-        },
-        {
-          name: 'Private-Services', 
-          subnetType: ec2.SubnetType.PRIVATE,
-        },
-      ],
-      gatewayEndpoints: {
-        S3: {
-          service: ec2.GatewayVpcEndpointAwsService.S3,
-        },
-      },
-    });
-  }
+ 
 }
