@@ -19,21 +19,19 @@ export interface FargateAutoscalerProps extends core.StackProps {
   readonly fgService: ecs.FargateService;
   readonly scaleType: string;
   readonly awsCliLayerArn?: string;
-  readonly awsCliLayerVersion?: string;
+  readonly awsCliLayerVersion?: string; 
   readonly disableScaleIn?: boolean;
   readonly snsTopic?: sns.ITopic;
   readonly timeout ?: core.Duration;
-}
+} 
 
-export class FargateAutoscalerStack extends core.Stack {
+export class FargateAutoscalerStack extends core.Construct {
   constructor(
     parent: core.App,
     name: string,
     props: FargateAutoscalerProps
   ) {
-    super(parent, name, {
-      ...props,
-    });
+    super(parent, name );
     
     const lambdaRole = new iam.Role(this, "lambdaRole", {
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
@@ -118,7 +116,7 @@ export class FargateAutoscalerStack extends core.Stack {
           cluster: props.cluster.clusterName,
           service: props.fgService.serviceName,
           disable_scalein: props.disableScaleIn === false ? "no" : "yes",
-          region: this.region,
+          // region: this.region,
         },
       });
   

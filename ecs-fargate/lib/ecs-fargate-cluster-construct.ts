@@ -26,7 +26,7 @@ export interface EcsFargateClusterStackProps extends cdk.StackProps {
  * VPC >> ECS Cluster
  * Shared Load Balancer: create an empty TargetGroup in the Shared ALB, and register a Service into it in the ServiceStack.
  */
-export class EcsFargateClusterStack extends cdk.Construct {
+export class EcsFargateClusterConstruct extends cdk.Construct {
   readonly cluster: Cluster;
   readonly alb: ApplicationLoadBalancer;
   readonly fgservice: FargateService;

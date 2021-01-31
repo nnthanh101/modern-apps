@@ -1,5 +1,5 @@
 import * as cdk from "@aws-cdk/core";
-import {Vpc as ec2Vpc,IVpc,SecurityGroup,SubnetType,GatewayVpcEndpointAwsService,CfnEIP,Port} from "@aws-cdk/aws-ec2";
+import {Vpc ,IVpc,SecurityGroup,SubnetType,GatewayVpcEndpointAwsService,CfnEIP,Port} from "@aws-cdk/aws-ec2";
 
 export interface VpcStackProps extends cdk.StackProps {
   readonly cidr?: string;
@@ -22,7 +22,7 @@ export interface VpcStackProps extends cdk.StackProps {
 /** 
  * Creating VPC
  */
-export class Vpc extends cdk.Construct {
+export class VpcConstruct extends cdk.Construct {
   public readonly vpc: IVpc;
   readonly securityGrp: SecurityGroup;
 
@@ -31,12 +31,12 @@ export class Vpc extends cdk.Construct {
 
     if (props.useExistVpc === '1') {
       if (props.useDefaultVpc === '1') {
-        this.vpc = ec2Vpc.fromLookup(parent, id + '-VPC', { isDefault: true });
+        this.vpc = Vpc.fromLookup(parent, id + '-VPC', { isDefault: true });
       } else {
         if (props.vpcId) {
-          this.vpc = ec2Vpc.fromLookup(parent, id + '-VPC', { isDefault: false, vpcId: props.vpcId });
+          this.vpc = Vpc.fromLookup(parent, id + '-VPC', { isDefault: false, vpcId: props.vpcId });
         } else {
-         this.vpc= new ec2Vpc(parent, id + '-VPC', {
+         this.vpc= new Vpc(parent, id + '-VPC', {
           cidr: props.cidr,
           maxAzs: props.maxAzs,
           subnetConfiguration: [
@@ -58,7 +58,7 @@ export class Vpc extends cdk.Construct {
         } 
       }
     } else {
-      this.vpc = new ec2Vpc(parent, id + '-VPC', {
+      this.vpc = new Vpc(parent, id + '-VPC', {
         cidr: props.cidr,
         maxAzs: props.maxAzs,
         subnetConfiguration: [

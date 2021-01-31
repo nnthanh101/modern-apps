@@ -35,7 +35,7 @@ export interface EcsFargateServiceStackProps extends cdk.StackProps {
  * ECS-Fargate Service Stack
  */
 // export class EcsFargateServiceStack extends FargateService {
-export class EcsFargateServiceStack extends cdk.Construct {
+export class EcsFargateServiceConstruct extends cdk.Construct {
   readonly fgservice: FargateService;
   constructor(parent: cdk.Construct, id: string, props: EcsFargateServiceStackProps) {
     super(parent, id);
